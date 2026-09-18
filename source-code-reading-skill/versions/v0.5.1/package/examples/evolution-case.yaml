@@ -1,0 +1,22 @@
+case_id: buffer-management-chain-001
+kind: feedback_case
+context:
+  pattern: Resource
+  representation: Entity Relationship
+observation: "图把 lookup 主链埋在了大量函数节点里。"
+classification: F6
+failure:
+  type: wrong_representation_granularity
+  detail: "implementation-level call nodes dominated the management relationship."
+correction:
+  keep:
+    - BufferTag
+    - BufTable
+    - BufferDesc
+  suppress:
+    - incidental helper calls
+candidate_rule:
+  title: prefer-management-backbone
+  trigger: "Resource + Entity Relationship"
+  behavior: "Prefer identity/index/managed-resource chain; suppress incidental call edges in the primary view."
+status: proposed

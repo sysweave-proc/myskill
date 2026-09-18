@@ -1,0 +1,21 @@
+baseline:
+  version: ""
+  files: []
+  capabilities: []
+
+candidate:
+  version: ""
+  files: []
+  capabilities: []
+
+comparison:
+  added: []
+  preserved: []
+  changed: []
+  removed: []
+
+approved_removals: []
+
+regression:
+  integrity: pending
+  semantic: pending

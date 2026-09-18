@@ -1,0 +1,854 @@
+version: 0.3.0
+name: source-reading-knowledge-sources
+purpose: >-
+  Registry of external methodologies, standards, tools, and high-quality project
+  documentation that can teach the source-reading skill how to choose abstractions,
+  representations, source-analysis techniques, and documentation practices.
+
+policy:
+  source_of_truth:
+    target_repository_facts: target_source_code
+    notation_semantics: registered_external_sources
+    tool_capabilities: registered_tool_docs
+    architecture_documentation_method: registered_methodology_sources
+  default_priority:
+    - user_or_project_source
+    - official_project_docs
+    - standards_or_original_methodology
+    - official_tool_docs
+    - mature_project_examples
+    - books_or_textbooks
+    - community_material
+  external_sources_may:
+    - define notation semantics
+    - explain method intent
+    - provide example representations
+    - suggest analysis techniques
+    - provide anti-patterns and constraints
+  external_sources_may_not:
+    - override target-repository source facts
+    - establish facts about a target codebase without target-source evidence
+    - turn a renderer syntax into a formal notation by resemblance alone
+
+resource_schema:
+  id: unique stable identifier
+  name: human-readable resource name
+  category: methodology | standard | renderer | analysis_tool | project_example | language_semantics | archival
+  authority: Tier-1 | Tier-2 | Tier-3 | Tier-4 | Tier-5
+  url: primary URL
+  verification: checked source URL and current relevance date
+  teaches: what the agent should learn
+  query_when: trigger conditions
+  do_not_use_when: boundaries / anti-use cases
+  direct_fact_scope: what claims this source may directly support
+  target_source_precedence: always | usually | supplementary
+  extract_to_rules: exact rule types to distill
+  useful_for_patterns: pattern IDs or concepts
+  localizable: whether useful to snapshot/extract into a local corpus
+  notes: maintenance notes
+
+resources:
+
+  # --- Standards / architecture documentation theory ---
+  - id: uml-2.5.1
+    name: OMG Unified Modeling Language 2.5.1
+    category: standard
+    authority: Tier-1
+    url: https://www.omg.org/spec/UML/2.5.1/About-UML
+    verification: 2026-09-17
+    teaches: >-
+      Formal semantics and vocabulary for class, component, sequence, state,
+      activity, deployment, and other UML modeling concepts.
+    query_when:
+      - choosing or validating a UML-style representation
+      - resolving whether a relationship should be called association, composition, etc.
+      - checking terminology before documenting a formal UML view
+    do_not_use_when:
+      - the task only needs an informal source-reading diagram
+      - the target repository uses semantics different from UML and the notation would confuse readers
+    direct_fact_scope: >-
+      Definitions and semantics of UML notation itself; not facts about the target repository.
+    target_source_precedence: supplementary
+    extract_to_rules:
+      - notation definitions
+      - terminology constraints
+      - formal-vs-informal naming rules
+    useful_for_patterns:
+      - structural
+      - state
+      - concurrency
+      - architecture
+    localizable: true
+    notes: >-
+      Current official OMG specification page; UML 2.5.1 is the formal version listed by OMG.
+
+  - id: iso-42010-2022
+    name: ISO/IEC/IEEE 42010:2022 Architecture Description
+    category: standard
+    authority: Tier-1
+    url: https://www.iso.org/standard/74393.html
+    verification: 2026-09-17
+    teaches: >-
+      Architecture-description concepts, viewpoints, model kinds, architecture-description
+      frameworks and languages, and the distinction between an architecture and its description.
+    query_when:
+      - designing architecture documentation policy
+      - deciding how views relate to stakeholders and usage
+      - establishing formal vocabulary for viewpoints and architecture descriptions
+    do_not_use_when:
+      - selecting a diagram for a narrow function-level source-reading problem
+    direct_fact_scope: >-
+      Standard terminology and requirements for architecture descriptions; not implementation facts.
+    target_source_precedence: supplementary
+    extract_to_rules:
+      - view/viewpoint distinction
+      - stakeholder-driven documentation rules
+      - architecture-description structure
+    useful_for_patterns:
+      - architecture
+    localizable: false
+    notes: >-
+      ISO states the standard does not prescribe a specific process, notation, technique, tool,
+      format, or medium; use it as a conceptual framework rather than a diagram recipe.
+
+  - id: sei-views-beyond
+    name: SEI Views and Beyond Collection
+    category: methodology
+    authority: Tier-1
+    url: https://sei.cmu.edu/library/views-and-beyond-collection/
+    verification: 2026-09-17
+    teaches: >-
+      View-based architecture documentation: a view represents system elements and relations;
+      relevant views should be selected based on anticipated use, with cross-view information documented separately.
+    query_when:
+      - choosing between multiple views
+      - deciding what information belongs in a view versus prose/crosscutting section
+      - structuring large architecture or source-reading documents
+    do_not_use_when:
+      - needing exact C/C++ semantics
+      - needing a repository-specific runtime fact
+    direct_fact_scope: >-
+      Methodology claims about architecture documentation and view selection.
+    target_source_precedence: supplementary
+    extract_to_rules:
+      - choose-view-by-usage
+      - one-purpose-view
+      - cross-view-information
+      - document-rationale-separately
+    useful_for_patterns:
+      - architecture
+      - structural
+      - flow
+      - concurrency
+    localizable: true
+    notes: >-
+      Use this as the conceptual parent for the skill's Representation Plan.
+
+  - id: sei-vb-book
+    name: "Documenting Software Architectures: Views and Beyond, 2nd Edition"
+    category: methodology
+    authority: Tier-1
+    url: https://www.sei.cmu.edu/library/documenting-software-architectures-views-and-beyond-second-edition/
+    verification: 2026-09-17
+    teaches: >-
+      Detailed practices for architecture views, interfaces, behavior, rationale, and examples.
+    query_when:
+      - refining document structure after the high-level view-selection rule is known
+      - looking for worked architecture documentation examples
+    do_not_use_when:
+      - using it as the source of target-code facts
+    direct_fact_scope: methodology only
+    target_source_precedence: supplementary
+    extract_to_rules:
+      - documentation depth
+      - view documentation fields
+      - rationale recording
+    useful_for_patterns:
+      - architecture
+    localizable: false
+    notes: >-
+      Book may require institutional or commercial access; the SEI landing page remains the canonical metadata source.
+
+  - id: c4-model
+    name: "C4 Model"
+    category: methodology
+    authority: Tier-1
+    url: https://c4model.com/
+    verification: 2026-09-17
+    teaches: >-
+      Hierarchical abstractions and corresponding diagram views: system context, container,
+      component, code, plus dynamic and deployment supporting views; the approach is notation/tool independent.
+    query_when:
+      - choosing architecture abstraction levels
+      - deciding whether a diagram is too detailed for the current question
+      - separating context from component/code views
+    do_not_use_when:
+      - modeling low-level C pointer ownership or exact lock semantics
+    direct_fact_scope: methodology and C4 terminology
+    target_source_precedence: supplementary
+    extract_to_rules:
+      - abstraction-level selection
+      - context-vs-detail separation
+      - do-not-put-everything-in-one-diagram
+    useful_for_patterns:
+      - architecture
+      - structural
+    localizable: true
+    notes: >-
+      Official site maintained by the C4 model creator.
+
+  - id: arc42
+    name: arc42 Architecture Documentation
+    category: methodology
+    authority: Tier-1
+    url: https://docs.arc42.org/
+    verification: 2026-09-17
+    teaches: >-
+      A practical 12-section architecture-documentation structure, including context, solution strategy,
+      building blocks, runtime view, deployment, crosscutting concepts, decisions, risks, and glossary.
+    query_when:
+      - deciding how to organize a large documentation set
+      - splitting system context, building blocks, runtime behavior, decisions, and glossary
+    do_not_use_when:
+      - generating a function-level note that does not require architecture documentation
+    direct_fact_scope: methodology and template guidance
+    target_source_precedence: supplementary
+    extract_to_rules:
+      - document-section selection
+      - architecture-document organization
+      - crosscutting-concept handling
+    useful_for_patterns:
+      - architecture
+      - structural
+      - flow
+      - recovery
+    localizable: true
+    notes: >-
+      Site currently advertises 144 practical tips and 35 worked examples.
+
+  # --- Historical modeling methods ---
+  - id: nassi-shneiderman-1973
+    name: "Nassi–Shneiderman 1973 paper"
+    category: archival
+    authority: Tier-1
+    url: https://www.nassi.com/nassi-shneiderman%20diagrams.pdf
+    verification: 2026-09-17
+    teaches: >-
+      Structured-programming diagrams designed around ordered constructs and restricted control transfer.
+    query_when:
+      - a user asks for Nassi–Shneiderman notation specifically
+      - evaluating whether a flow should be expressed as structured sequence/selection/iteration
+    do_not_use_when:
+      - pretending a Mermaid flowchart is canonical Nassi–Shneiderman notation
+    direct_fact_scope: >-
+      Historical semantics and goals of the notation.
+    target_source_precedence: supplementary
+    extract_to_rules:
+      - structured-flow semantics
+      - do-not-confuse-with-generic-flowchart
+    useful_for_patterns:
+      - flow
+    localizable: true
+    notes: >-
+      Original SIGPLAN Notices paper hosted by the authors' site.
+
+  - id: yourdon-constantine-structured-design
+    name: "Structured Design — Yourdon & Constantine"
+    category: archival
+    authority: Tier-1
+    url: https://vtda.org/books/Computing/Programming/StructuredDesign_EdwardYourdonLarryConstantine.pdf
+    verification: 2026-09-17
+    teaches: >-
+      Structured analysis/design distinctions including data-flow thinking, structure charts,
+      modular decomposition, and the difference between module structure and control flow.
+    query_when:
+      - distinguishing structure charts from flowcharts
+      - designing module-level structural views
+      - analyzing data/control coupling
+    do_not_use_when:
+      - target code semantics need compiler-accurate facts
+    direct_fact_scope: historical method semantics
+    target_source_precedence: supplementary
+    extract_to_rules:
+      - structure-chart-vs-flowchart
+      - modular decomposition
+      - coupling vocabulary
+    useful_for_patterns:
+      - structural
+      - flow
+      - data-path
+    localizable: true
+    notes: >-
+      Archival public PDF; treat as historical methodology, not a current language or tool standard.
+
+  - id: jsp-program-design
+    name: Program Design Using JSP
+    category: archival
+    authority: Tier-4
+    url: https://link.springer.com/book/10.1007/978-1-349-22081-6
+    verification: 2026-09-17
+    teaches: >-
+      Jackson Structured Programming concepts and examples focused on data structures and program structure.
+    query_when:
+      - analyzing data-centric legacy program structure
+      - when data structure drives processing structure
+    do_not_use_when:
+      - the project is modern and the JSP method would add more notation than value
+    direct_fact_scope: method description and historical semantics
+    target_source_precedence: supplementary
+    extract_to_rules:
+      - data-structure-first modeling
+      - legacy-method trigger
+    useful_for_patterns:
+      - data-path
+      - flow
+      - structural
+    localizable: false
+    notes: >-
+      Springer metadata page; much of the book may be access-controlled.
+
+  - id: ibm-hipo-archive
+    name: IBM HIPO archival materials
+    category: archival
+    authority: Tier-2
+    url: https://www.bitsavers.org/pdf/ibm/generalInfo/GC20-1850-0_Improved_Programming_Technologies_-_An_Overview_1st_ed_197410.pdf
+    verification: 2026-09-17
+    teaches: >-
+      Historical HIPO concepts: hierarchy together with input/process/output descriptions.
+    query_when:
+      - preserving or interpreting legacy HIPO documentation
+      - comparing module hierarchy with IPO-level descriptions
+    do_not_use_when:
+      - choosing a default modern source-reading representation
+    direct_fact_scope: archival method description
+    target_source_precedence: supplementary
+    extract_to_rules:
+      - hierarchy-plus-IPO distinction
+      - legacy-only trigger
+    useful_for_patterns:
+      - structural
+      - flow
+    localizable: true
+    notes: >-
+      Archival copy hosted by Bitsavers; treat archive provenance accordingly.
+
+  # --- Renderers / diagram-as-code ---
+  - id: mermaid-docs
+    name: Mermaid documentation
+    category: renderer
+    authority: Tier-2
+    url: https://mermaid.js.org/intro/syntax-reference.html
+    verification: 2026-09-17
+    teaches: >-
+      Current Mermaid syntax and supported diagram families such as flowchart, class, sequence,
+      state, ER, and other diagram types.
+    query_when:
+      - converting an already chosen semantic representation into Markdown
+      - checking whether a required diagram family has native Mermaid syntax
+    do_not_use_when:
+      - deciding what the semantic model should be
+      - claiming formal UML/Petri/NS semantics solely because Mermaid renders a similar shape
+    direct_fact_scope: Mermaid syntax and rendering capabilities
+    target_source_precedence: tool-only
+    extract_to_rules:
+      - renderer-capability checks
+      - syntax compatibility checks
+    useful_for_patterns:
+      - all representation families
+    localizable: true
+    notes: >-
+      Renderer reference only. The skill must choose semantics before Mermaid.
+
+  - id: graphviz
+    name: Graphviz documentation
+    category: renderer
+    authority: Tier-2
+    url: https://graphviz.org/documentation/
+    verification: 2026-09-17
+    teaches: >-
+      DOT graph language, layout engines, attributes, and graph rendering; the dot engine is useful for
+      hierarchical/layered directed graphs.
+    query_when:
+      - a graph has many nodes/edges and automatic layout matters
+      - generating dependency/call/management graphs from structured data
+    do_not_use_when:
+      - the graph is small and a Mermaid view is clearer
+      - specialized formal semantics are required but Graphviz is only providing layout
+    direct_fact_scope: Graphviz syntax/layout/tool behavior
+    target_source_precedence: tool-only
+    extract_to_rules:
+      - graph-size threshold
+      - automatic-layout routing
+      - graph-vs-semantic separation
+    useful_for_patterns:
+      - structural
+      - dependency
+      - call-graph
+      - resource
+    localizable: true
+    notes: >-
+      Graphviz is a renderer/layout system, not a replacement for semantic modeling.
+
+  - id: plantuml
+    name: PlantUML
+    category: renderer
+    authority: Tier-2
+    url: https://plantuml.com/
+    verification: 2026-09-17
+    teaches: >-
+      Text-defined UML diagrams including sequence, class, activity, component, deployment,
+      state, timing, plus additional non-UML diagram families.
+    query_when:
+      - Mermaid lacks useful syntax for a formal UML-oriented deliverable
+      - a text-first renderer with richer UML coverage is needed
+    do_not_use_when:
+      - the notation semantics themselves are unresolved
+      - a specialized static-analysis graph would be more accurate
+    direct_fact_scope: PlantUML syntax and supported diagram types
+    target_source_precedence: tool-only
+    extract_to_rules:
+      - renderer fallback
+      - text-first UML rendering
+    useful_for_patterns:
+      - structural
+      - state
+      - flow
+      - sequence
+      - architecture
+    localizable: true
+    notes: >-
+      Use PlantUML as an alternative text renderer, not as the knowledge model.
+
+  - id: structurizr-dsl
+    name: Structurizr DSL and views
+    category: renderer
+    authority: Tier-2
+    url: https://docs.structurizr.com/dsl
+    verification: 2026-09-17
+    teaches: >-
+      Model-based C4 architecture diagrams, view definitions, automatic/manual layouts, and export to
+      Mermaid, PlantUML, DOT, and other formats.
+    query_when:
+      - a stable shared architecture model should drive multiple views
+      - maintaining consistency across many architecture diagrams matters
+    do_not_use_when:
+      - modeling arbitrary low-level C field semantics
+    direct_fact_scope: Structurizr DSL/tool behavior
+    target_source_precedence: tool-only
+    extract_to_rules:
+      - single-model-multiple-views
+      - model-before-renderer
+      - export-strategy
+    useful_for_patterns:
+      - architecture
+      - structural
+    localizable: true
+    notes: >-
+      Particularly useful as an implementation precedent for our own “knowledge graph → multiple views” design.
+
+  - id: structurizr-pattern-catalog
+    name: Structurizr Pattern Catalog
+    category: project_example
+    authority: Tier-2
+    url: https://docs.structurizr.com/dsl/patterns/
+    verification: 2026-09-17
+    teaches: >-
+      Small concrete architecture modeling patterns and alternative ways to model the same concept at
+      different levels of precision and simplicity.
+    query_when:
+      - looking for worked examples of view granularity and pattern choices
+      - teaching the agent that there may be multiple valid representations
+    do_not_use_when:
+      - inferring target-code facts
+    direct_fact_scope: example modeling patterns only
+    target_source_precedence: supplementary
+    extract_to_rules:
+      - alternative-representation handling
+      - precision-vs-simplicity tradeoffs
+    useful_for_patterns:
+      - architecture
+      - structural
+    localizable: true
+    notes: >-
+      Excellent example corpus for case-based learning, but it is architecture-focused.
+
+# --- C/C++ source analysis and navigation ---
+  - id: clang-ast-matchers
+    name: Clang LibASTMatchers
+    category: analysis_tool
+    authority: Tier-2
+    url: https://clang.llvm.org/docs/LibASTMatchers.html
+    verification: 2026-09-17
+    teaches: >-
+      AST matching and extraction of C/C++ declarations, expressions, source locations, and other AST-level attributes.
+    query_when:
+      - grep is ambiguous or macro/template/overload structure matters
+      - building reliable entity/reference extraction
+      - needing compiler-aware source anchors
+    do_not_use_when:
+      - only a simple textual search is needed
+      - the compilation database or build context is unavailable and the exact AST cannot be reconstructed
+    direct_fact_scope: Clang AST/tool behavior
+    target_source_precedence: tool-only
+    extract_to_rules:
+      - prefer-semantic-search-when-needed
+      - entity/source-anchor extraction
+      - AST-backed validation
+    useful_for_patterns:
+      - structural
+      - flow
+      - state
+      - data-path
+      - lifecycle
+    localizable: true
+    notes: >-
+      Use as a fact-extraction backend, not as a methodology source.
+
+  - id: clang-tooling
+    name: Clang Tooling / LibTooling
+    category: analysis_tool
+    authority: Tier-2
+    url: https://clang.llvm.org/docs/Tooling.html
+    verification: 2026-09-17
+    teaches: >-
+      How to build standalone Clang-based source analysis and transformation tools, and when to use
+      LibTooling versus plugins or other interfaces.
+    query_when:
+      - implementing project-specific source extraction
+      - building reusable analysis passes for a large C/C++ repository
+    do_not_use_when:
+      - deciding document content or diagram semantics
+    direct_fact_scope: Clang tooling architecture and capabilities
+    target_source_precedence: tool-only
+    extract_to_rules:
+      - tool-choice rules
+      - reusable-analysis backend
+    useful_for_patterns:
+      - all source-analysis patterns
+    localizable: true
+    notes: >-
+      Useful when the skill evolves from LLM-only exploration to a hybrid static-analysis backend.
+
+  - id: clang-cfg-dataflow
+    name: Clang CFG and Data-Flow Analysis Introduction
+    category: analysis_tool
+    authority: Tier-2
+    url: https://clang.llvm.org/docs/DataFlowAnalysisIntro.html
+    verification: 2026-09-17
+    teaches: >-
+      CFG-based reasoning and data-flow analysis concepts, including how control flow supports path-sensitive analysis.
+    query_when:
+      - a source question requires exact intra-function control paths
+      - identifying state/value propagation rather than just call order
+    do_not_use_when:
+      - producing a human-level operation-flow diagram where a simplified path is clearer
+    direct_fact_scope: compiler-analysis concepts and Clang analysis capabilities
+    target_source_precedence: tool-only
+    extract_to_rules:
+      - CFG-vs-flowchart distinction
+      - dataflow-vs-callgraph distinction
+    useful_for_patterns:
+      - flow
+      - data-path
+      - state
+
+  - id: codeql-cpp
+    name: CodeQL for C/C++
+    category: analysis_tool
+    authority: Tier-2
+    url: https://codeql.github.com/docs/codeql-language-guides/codeql-for-cpp/
+    verification: 2026-09-17
+    teaches: >-
+      Queryable C/C++ program structure plus libraries for types, calls, guards, range analysis, dataflow,
+      and pointer/indirection-aware analysis.
+    query_when:
+      - the relationship cannot be established reliably by local text search
+      - precise cross-function/cross-file dataflow or semantic matching is needed
+      - validating candidate rules against a repository at scale
+    do_not_use_when:
+      - the question is a small local source-reading problem where direct source inspection is enough
+    direct_fact_scope: CodeQL query/library semantics
+    target_source_precedence: supplementary
+    extract_to_rules:
+      - scale-out semantic queries
+      - precise dataflow checks
+      - regression query patterns
+    useful_for_patterns:
+      - data-path
+      - flow
+      - structural
+      - state
+      - resource
+
+  - id: codeql-cpp-dataflow
+    name: CodeQL C/C++ Data Flow Analysis
+    category: analysis_tool
+    authority: Tier-2
+    url: https://codeql.github.com/docs/codeql-language-guides/analyzing-data-flow-in-cpp/
+    verification: 2026-09-17
+    teaches: >-
+      Local/global data flow and taint-tracking concepts for C/C++, including propagation and use sites.
+    query_when:
+      - the source-reading question is explicitly about data propagation
+      - verifying a Data Path representation against code
+    do_not_use_when:
+      - using it as a substitute for a high-level data-path explanation
+    direct_fact_scope: CodeQL dataflow semantics
+    target_source_precedence: supplementary
+    extract_to_rules:
+      - dataflow verification
+      - local-vs-global trace depth
+    useful_for_patterns:
+      - data-path
+      - flow
+
+  - id: doxygen-diagrams
+    name: Doxygen Graphs and Diagrams
+    category: analysis_tool
+    authority: Tier-2
+    url: https://www.doxygen.nl/manual/diagrams.html
+    verification: 2026-09-17
+    teaches: >-
+      Automatically generated inheritance, usage, include-dependency, call, caller, and directory graphs;
+      also documents how Doxygen delegates advanced graph generation to Graphviz.
+    query_when:
+      - a generated overview of C/C++ relationships is useful
+      - building source navigation or quick orientation before manual modeling
+    do_not_use_when:
+      - treating generated graphs as the final reader-oriented knowledge model
+      - the graph is too large to interpret without curation
+    direct_fact_scope: Doxygen's generated-diagram behavior
+    target_source_precedence: supplementary
+    extract_to_rules:
+      - generated-graph-as-input
+      - manual-curation-after-static-analysis
+    useful_for_patterns:
+      - structural
+      - dependency
+      - call-graph
+      - architecture
+    localizable: true
+    notes: >-
+      Doxygen explicitly warns that very large hierarchy diagrams can become too large to handle; use that as a reminder to curate.
+
+  - id: sourcegraph-navigation
+    name: Sourcegraph Code Navigation
+    category: analysis_tool
+    authority: Tier-2
+    url: https://sourcegraph.com/docs/code-navigation/precise-code-navigation
+    verification: 2026-09-17
+    teaches: >-
+      Precise symbol navigation, references, implementations, and compiler-aware indexing; current docs list
+      C/C++ support through scip-clang.
+    query_when:
+      - navigating a very large codebase across many files/repositories
+      - precise go-to-definition/find-references is a bottleneck
+    do_not_use_when:
+      - exact navigation can be done locally with project tools
+      - a source claim still needs direct code inspection after navigation
+    direct_fact_scope: Sourcegraph navigation/indexing behavior
+    target_source_precedence: supplementary
+    extract_to_rules:
+      - semantic-navigation-backend
+      - search-vs-precise-navigation distinction
+    useful_for_patterns:
+      - structural
+      - flow
+      - lifecycle
+      - data-path
+      - architecture
+
+  - id: cplusplus-core-guidelines
+    name: C++ Core Guidelines
+    category: language_semantics
+    authority: Tier-1
+    url: https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines
+    verification: 2026-09-17
+    teaches: >-
+      Practical vocabulary and heuristics for ownership, lifetime, resource management, interfaces,
+      pre/postconditions, and concurrency in C++.
+    query_when:
+      - interpreting raw pointers, references, owner handles, RAII, resource ownership, or preconditions
+      - checking whether an ownership interpretation is linguistically supported in idiomatic C++
+    do_not_use_when:
+      - claiming a legacy codebase follows the guideline without evidence
+      - assuming a raw pointer is non-owning solely because a guideline recommends that convention
+    direct_fact_scope: C++ guideline recommendations and terminology
+    target_source_precedence: supplementary
+    extract_to_rules:
+      - pointer-vs-ownership caution
+      - ownership evidence requirements
+      - resource/lifetime vocabulary
+    useful_for_patterns:
+      - lifecycle
+      - structural
+      - resource
+      - concurrency
+    localizable: true
+    notes: >-
+      Especially useful as a semantic guardrail. Legacy C/C++ may intentionally violate modern guidance.
+
+# --- Concurrency / systems semantics ---
+  - id: linux-locking
+    name: Linux Kernel Locking Documentation
+    category: project_example
+    authority: Tier-1
+    url: https://kernel.org/doc/html/latest/locking/index.html
+    verification: 2026-09-17
+    teaches: >-
+      Locking categories, lock types, ordering, lockdep concepts, spinlock behavior, and practical concurrency rules.
+    query_when:
+      - modeling lock ownership/protection/waiting
+      - interpreting kernel-style concurrency or synchronization protocols
+    do_not_use_when:
+      - assuming a PostgreSQL or user-space lock behaves exactly like a Linux kernel lock
+    direct_fact_scope: Linux kernel locking semantics and documentation examples
+    target_source_precedence: supplementary
+    extract_to_rules:
+      - protect-object-not-just-lock
+      - lock-order modeling
+      - synchronization invariant vocabulary
+    useful_for_patterns:
+      - concurrency
+      - state
+      - resource
+
+  - id: linux-lockdep
+    name: Linux lockdep design documentation
+    category: project_example
+    authority: Tier-1
+    url: https://docs.kernel.org/locking/lockdep-design.html
+    verification: 2026-09-17
+    teaches: >-
+      Lock-class, usage-state, and lock-dependency concepts, including ordering relations such as L1 -> L2.
+    query_when:
+      - a concurrency problem involves multiple lock classes or lock-order constraints
+      - designing a lock-order/constraint representation
+    do_not_use_when:
+      - treating lockdep relations as universal semantics for every lock implementation
+    direct_fact_scope: Linux lockdep semantics
+    target_source_precedence: supplementary
+    extract_to_rules:
+      - lock-class abstraction
+      - lock-order relation
+      - concurrency-constraint representation
+    useful_for_patterns:
+      - concurrency
+      - constraint
+
+  - id: linux-kernel-memory-model
+    name: Linux Kernel Memory Model Documentation
+    category: project_example
+    authority: Tier-1
+    url: https://docs.kernel.org/dev-tools/lkmm/readme.html
+    verification: 2026-09-17
+    teaches: >-
+      Formalized kernel memory-model vocabulary around memory references, barriers, atomics, lock
+      acquisition/release, and RCU.
+    query_when:
+      - state visibility or ordering cannot be explained using locks alone
+      - modeling atomic/barrier/RCU constraints
+    do_not_use_when:
+      - assuming kernel memory-model primitives map one-to-one to user-space C++ memory ordering
+    direct_fact_scope: LKMM concepts and semantics
+    target_source_precedence: supplementary
+    extract_to_rules:
+      - ordering-vs-locking distinction
+      - memory-visibility constraints
+    useful_for_patterns:
+      - concurrency
+      - constraint
+      - state
+
+# --- Mature project examples ---
+  - id: postgresql-coding
+    name: PostgreSQL Coding / Source Exploration
+    category: project_example
+    authority: Tier-1
+    url: https://www.postgresql.org/developer/coding/
+    verification: 2026-09-17
+    teaches: >-
+      Practical source navigation resources including the repository, Doxygen source browser, and backend flowchart.
+    query_when:
+      - the target repository is PostgreSQL
+      - looking for an example of project-maintained architecture/source navigation views
+    do_not_use_when:
+      - treating PostgreSQL's navigation choices as universal modeling rules
+    direct_fact_scope: PostgreSQL's own developer-source-navigation resources
+    target_source_precedence: always
+    extract_to_rules:
+      - project-specific source-navigation precedence
+      - generated-diagram-as-navigation-example
+    useful_for_patterns:
+      - architecture
+      - flow
+      - structural
+
+  - id: postgresql-backend-flowchart
+    name: PostgreSQL Backend Flowchart
+    category: project_example
+    authority: Tier-1
+    url: https://www.postgresql.org/developer/backend/
+    verification: 2026-09-17
+    teaches: >-
+      A real large C backend represented as a navigable high-level flow from network input through parser,
+      statement processing, and executor paths.
+    query_when:
+      - needing a real large-project example of a curated backend flow view
+      - designing high-level source-navigation flowcharts
+    do_not_use_when:
+      - assuming its abstraction level is correct for every PostgreSQL subsystem
+    direct_fact_scope: PostgreSQL backend architecture/flow description on the official site
+    target_source_precedence: always
+    extract_to_rules:
+      - high-level-flow-before-function-detail
+      - navigable-flow-as-source-index
+    useful_for_patterns:
+      - architecture
+      - flow
+
+  - id: postgres-source-format
+    name: PostgreSQL Source Formatting / Coding Conventions
+    category: project_example
+    authority: Tier-1
+    url: https://www.postgresql.org/docs/current/source-format.html
+    verification: 2026-09-17
+    teaches: >-
+      Project-specific source formatting and style expectations that can affect how source snippets are quoted and navigated.
+    query_when:
+      - formatting PostgreSQL code snippets
+      - preserving source style in generated notes
+    do_not_use_when:
+      - generalizing PostgreSQL formatting conventions to other projects
+    direct_fact_scope: PostgreSQL coding conventions only
+    target_source_precedence: always
+    extract_to_rules:
+      - project-specific snippet style
+    useful_for_patterns:
+      - all
+
+# --- Optional extension sources ---
+  - id: omg-sysml-2
+    name: OMG SysML 2.0
+    category: standard
+    authority: Tier-1
+    url: https://www.omg.org/spec/SysML/2.0/About-SysML
+    verification: 2026-09-17
+    teaches: >-
+      Modern systems-modeling concepts and machine-readable textual notation that can be relevant when C/C++
+      software is part of a larger hardware/software/system model.
+    query_when:
+      - firmware, embedded, hardware/software co-design, or system-level modeling is in scope
+    do_not_use_when:
+      - ordinary database/server C/C++ source reading
+    direct_fact_scope: SysML terminology and notation
+    target_source_precedence: supplementary
+    extract_to_rules:
+      - optional-system-modeling-escalation
+    useful_for_patterns:
+      - architecture
+      - deployment
+      - resource
+    localizable: true
+    notes: >-
+      Keep as an advanced source; do not burden the default skill path with SysML.
