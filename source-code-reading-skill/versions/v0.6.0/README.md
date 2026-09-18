@@ -63,5 +63,8 @@ v0.6.0   = 可执行、可追溯、可回归、可持续演进的源码阅读 Sk
 
 - **本版没有 `conversation/`**，这是与其他六版唯一的结构差别：它不是会话冻结产物。
 - 包内出现「`*-policy.md` / `*-catalog.md`（规范）+ `architecture-atlas.md` 等（快速入口）」成对文件，是决策 D 的刻意产物——入口页末尾都显式回指规范位置（例：`traceability.md` → `references/tracing/`）。
-- `SKILL.md` 的 `description` 仍是 `>-` 折叠式块标量（继承六版写法），但文本内不含尖括号。
+- **post-freeze 修复（2 项）**：`skill/` 在冻结后含两处缺陷修复，因此与 `source.zip`（2026-09-18 冻结原件，未改动）**不再逐字节一致**：
+  1. `SKILL.md` 的 `description: >-` → `|-`。原写法并不是「描述正文含尖括号」的问题——官方校验器用 `description:\s*(.+)` 取值，`\s*` 跨不过 `>-` 里的 `>`，于是抓到的 description 就是字面量 `>-`，导致 v0.1–v0.6.0 **七版全部**被判 `Description cannot contain angle brackets (< or >)`。改后 `quick_validate.py` 报 `Skill is valid!`，描述正文一字未改。
+  2. `tests/test_skill_integrity.py` 增加基线/候选目录的存在性与非空守卫。原版传错基线路径时 `b=∅`，所有保留性检查平凡为真，会打印 `PASS: preserved 0 baseline files ... added 59 files` 假通过——恰好在最需要它报警时失效。现在非法输入返回 exit 2。
+  记录见 `skill/CHANGELOG.md`。
 - 交付校验：`skill/tests/test_skill_integrity.py`（对 v0.4 基线做 SHA-256 比对 + 白名单）与 `skill/tests/test_merged_capabilities.py`（合并能力语义检查）。

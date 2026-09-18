@@ -1,7 +1,7 @@
 ---
 name: source-code-reading
 version: 0.6.0
-description: >-
+description: |-
   A canonical, traceable source-reading skill for large C/C++ systems such as
   Linux, PostgreSQL, MySQL, and LLVM. It builds a persistent architecture-aware
   knowledge model, executes through progressive gates, recognizes the dominant

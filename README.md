@@ -9,6 +9,8 @@
 | [`source-code-reading-skill/`](source-code-reading-skill/) | 面向大型 C/C++ 项目的「源码阅读知识建模」技能包：`versions/` 存七版演进（含原始 zip、解压产物、对话原始材料），顶层 `skill-ds/` 存非谱系的对照版（v0.6.0 的合并输入） | v0.1 → v0.6.0 |
 
 > **变动记录**：原顶层 `skill-ds/` 已移入 `source-code-reading-skill/skill-ds/`（它不属于版本谱系，保留作 v0.6.0 的对照与输入材料）；`skill-ds-chatgpt/` 已删除（质量不达标）。
+>
+> **v0.6.0 post-freeze 修复**（2 项，均已实测）：`SKILL.md` 的 `description: >-` → `|-`（原写法令官方校验器七版全 fail，改后 `Skill is valid!`）；`tests/test_skill_integrity.py` 增加基线目录存在性/非空守卫（原版传错路径会假通过）。因此 `versions/v0.6.0/skill/` 与其 `source.zip` 不再逐字节一致，记录见该版 `README.md` 备注与 `skill/CHANGELOG.md`。
 
 ## 目录约定
 

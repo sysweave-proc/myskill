@@ -27,8 +27,22 @@ def main() -> int:
         return 2
     baseline = Path(sys.argv[1]).resolve()
     candidate = Path(sys.argv[2]).resolve()
+
+    # Guard: an empty or non-existent baseline would make the preservation
+    # checks vacuously true and report a false PASS.
+    if not baseline.is_dir():
+        print(f"ERROR: baseline directory not found: {baseline}")
+        return 2
+    if not candidate.is_dir():
+        print(f"ERROR: candidate directory not found: {candidate}")
+        return 2
+
     b = file_set(baseline)
     c = file_set(candidate)
+
+    if not b:
+        print(f"ERROR: baseline directory contains no files: {baseline}")
+        return 2
 
     policy_path = candidate / "evolution" / "approved-changes.yaml"
     policy = yaml.safe_load(policy_path.read_text()) if policy_path.exists() else {}

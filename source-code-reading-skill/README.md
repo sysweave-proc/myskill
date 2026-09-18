@@ -59,10 +59,11 @@ source-code-reading-skill/
 
 ## 已知问题
 
-1. **六个版本的 frontmatter 都过不了官方校验器**（已用原始文件逐个核对）：
-   - v0.1 / v0.2 / v0.3 / v0.4 / v0.5.1 用 `description: >-`，校验器报 `Description cannot contain angle brackets (< or >)`；
+1. **frontmatter 过不了官方校验器 —— 根因已定位，v0.6.0 已修**（用 `skill-creator/scripts/quick_validate.py` 逐版实测）：
+   - **根因**：问题不在描述正文。校验器以 `re.search(r'description:\s*(.+)', frontmatter)` 取描述，`\s*` 跨不过折叠块标量指示符 `>-` 里的 `>`，因此取到的 description 就是字面量 `>-`，必然命中 `Description cannot contain angle brackets (< or >)`。此前「描述文本不含尖括号所以可能通过」的推断不成立。
+   - v0.1 / v0.2 / v0.3 / v0.4 / v0.5.1 用 `description: >-` → 同一根因；为保住各版冻结字节，**不回溯修改**。
    - v0.5 把 `description` 整个删掉、换成 `summary`，报 `Missing 'description' in frontmatter`。
-   - v0.6.0 沿用 `>-` 折叠式块标量，但描述文本内**不含尖括号**（是否通过尚未实测）。
+   - v0.6.0 **已修**：`SKILL.md` 改为 `description: |-`，实测输出 `Skill is valid!`（描述正文未改一字）；已安装的 user skill 已同步。该修复为 post-freeze patch，故 `versions/v0.6.0/skill/` 与其 `source.zip` 不再逐字节一致，详见 `versions/v0.6.0/README.md` 备注。
 2. **v0.4 的行尾与其他版本不齐**：其文件以单个 `\n` 结尾。早前从会话正文重建的那一版给每个文件多补了一个结尾空行，这正是 v0.4 行数出现 2,662 与 2,697 两个口径的原因。
 
 ## 保真度校验（已完成）
