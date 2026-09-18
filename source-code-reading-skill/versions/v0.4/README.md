@@ -15,7 +15,7 @@
 
 | 路径 | 内容 |
 |---|---|
-| `package/` | 技能包文件树（35 个文件，可直接阅读） |
+| `skill/` | 技能包文件树（35 个文件，可直接阅读） |
 | `source.zip` | 原始 zip（权威字节，勿改） |
 | `conversation/` | 对话材料：`conversation.md` 逐轮全文 · `raw-data.json` 页面内嵌数据 · `snapshot.html` 页面快照 |
 
@@ -27,4 +27,4 @@
 
 - frontmatter 仍用 `description: >-`，仍过不了官方校验器。
 - 本版对话中有 **50 条**工具回显被 ChatGPT 抹掉（`redacted`）。
-- 原始 zip 内是**双层目录**（`source-code-reading-skill-v0.4/source-code-reading-skill/`），本目录的 `package/` 已展平到包根。
+- 原始 zip 内是**双层目录**（`source-code-reading-skill-v0.4/source-code-reading-skill/`），本目录的 `skill/` 已展平到包根。

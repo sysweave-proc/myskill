@@ -15,7 +15,7 @@
 
 | 路径 | 内容 |
 |---|---|
-| `package/` | 技能包文件树（17 个文件，可直接阅读） |
+| `skill/` | 技能包文件树（17 个文件，可直接阅读） |
 | `source.zip` | 原始 zip（权威字节，勿改） |
 | `conversation/` | 对话材料：`conversation.md` 逐轮全文 · `raw-data.json` 页面内嵌数据 · `snapshot.html` 页面快照 |
 

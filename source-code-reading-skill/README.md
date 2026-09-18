@@ -22,7 +22,7 @@ source-code-reading-skill/
 ├── versions/
 │   ├── v0.1/  v0.2/  v0.3/  v0.4/  v0.5/  v0.5.1/
 │   │   ├── README.md       本版说明：主题、变化、包内构成、已知缺陷
-│   │   ├── package/        该版技能包文件树（可直接阅读 / diff）
+│   │   ├── skill/        该版技能包文件树（可直接阅读 / diff）
 │   │   ├── source.zip      该版原始 zip（权威字节，勿改）
 │   │   └── conversation/   该版的讨论过程
 │   │       ├── conversation.md   逐轮对话全文
@@ -34,7 +34,7 @@ source-code-reading-skill/
 └── README.md
 ```
 
-- `package/` 与 `source.zip` 是同一份内容的两种形态（解压 vs 压缩原件）。
+- `skill/` 与 `source.zip` 是同一份内容的两种形态（解压 vs 压缩原件）。
 - `conversation/` 里 `conversation.md` 的正文**逐字取自** `raw-data.json`（校验过：六个版本共 33,439 行正文，0 例外出自原料），但它不收录 `raw-data.json` 里的 `content.thoughts`（模型内部思考）与 `message.metadata.*`（引用来源、搜索结果 URL）——那两类不是对话正文。
 
 ## 版本谱系
