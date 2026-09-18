@@ -1,0 +1,323 @@
+version: 0.4.0
+name: source-reading-knowledge-sources
+purpose: 经过筛选的外部资源，用于教授 Skill 方法论、记法、渲染、源码分析技术以及语言/系统
+  语义与成熟项目的文档实践。
+policy:
+  source_of_truth:
+    target_repository_facts: target_source_code
+    target_project_behavior: target_source_code_plus_official_project_docs
+    notation_semantics: registered_standards_or_methodology
+    renderer_capabilities: official_tool_docs
+  priority:
+  - target_repository_and_project_docs
+  - standards_or_original_methodology
+  - official_tool_docs
+  - mature_project_examples
+  - books_and_textbooks
+  - community_material
+  external_sources_may:
+  - 定义记法语义
+  - 教授方法论
+  - 提供示例与反模式
+  - 建议分析技术
+  - 建立工具能力
+  external_sources_may_not:
+  - 覆盖目标仓库事实
+  - 在没有目标源码证据的情况下证明目标源码行为
+  - 仅凭 Renderer 语法的相似外观就将其视为形式化记法
+resource_schema:
+  required:
+  - id
+  - name
+  - category
+  - authority
+  - url
+  - verification
+  - teaches
+  - query_when
+  - do_not_use_when
+  - direct_fact_scope
+  - extract_to_rules
+  categories:
+  - methodology
+  - standard
+  - renderer
+  - analysis_tool
+  - project_example
+  - language_semantics
+  - archival
+resources:
+- id: uml-omg
+  name: OMG UML
+  category: standard
+  authority: Tier-1
+  url: https://www.omg.org/spec/UML/About-UML/
+  verification: verified-for-registry-v0.4
+  teaches: UML 语义与图表词汇
+  query_when: 选择或检查 Class、Sequence、State、Activity、Component、Deployment 语义时
+  do_not_use_when: 不得用于推断目标代码事实
+  direct_fact_scope: 定义 UML 记法语义；不定义目标代码行为
+  extract_to_rules:
+  - formal_notation_guard
+  - view_semantics
+- id: iso-42010
+  name: ISO/IEC/IEEE 42010
+  category: standard
+  authority: Tier-1
+  url: https://www.iso.org/standard/74393.html
+  verification: verified-for-registry-v0.4
+  teaches: '架构描述概念：concern、viewpoint、view、architecture description'
+  query_when: 设计架构 viewpoint 或区分架构 concern 时
+  do_not_use_when: 不得将其作为实现事实的来源
+  direct_fact_scope: 架构描述方法论/词汇
+  extract_to_rules:
+  - concern_viewpoint_rule
+  - architecture_description_guard
+- id: sei-vab
+  name: SEI Views and Beyond
+  category: methodology
+  authority: Tier-1
+  url: https://www.sei.cmu.edu/library/views-and-beyond-collection/
+  verification: verified-for-registry-v0.4
+  teaches: 视图选择、文档结构、跨视图一致性
+  query_when: 决定记录哪些架构视图时
+  do_not_use_when: 不是 C/C++ 运行时事实的来源
+  direct_fact_scope: 架构文档方法
+  extract_to_rules:
+  - view_selection
+  - view_completeness
+- id: c4model
+  name: C4 Model
+  category: methodology
+  authority: Tier-1
+  url: https://c4model.com/
+  verification: verified-for-registry-v0.4
+  teaches: 分层架构可视化与缩放层级
+  query_when: 创建面向 system/container/component/code 的架构视图时
+  do_not_use_when: 不要强制使用全部四个层级，也不要将其视为源码事实
+  direct_fact_scope: 架构抽象与视图选择
+  extract_to_rules:
+  - control_abstraction_depth
+  - one_model_multiple_views
+- id: arc42
+  name: arc42
+  category: methodology
+  authority: Tier-2
+  url: https://docs.arc42.org/
+  verification: verified-for-registry-v0.4
+  teaches: 实用的架构文档组织结构
+  query_when: 组织较大的文档集合与跨切面概念时
+  do_not_use_when: 如果某个 concern 不存在，不要强行把相应章节塞进源码阅读笔记
+  direct_fact_scope: 文档章节选择
+  extract_to_rules:
+  - section_selection
+  - cross_cutting_concepts
+- id: yourdon-constantine
+  name: Yourdon/Constantine Structured Design
+  category: methodology
+  authority: Tier-1
+  url: https://vtda.org/books/Computing/Programming/StructuredDesign_EdwardYourdonLarryConstantine.pdf
+  verification: verified-for-registry-v0.4
+  teaches: 结构图以及与控制流/数据流的区别
+  query_when: 区分模块结构与执行流时
+  do_not_use_when: 历史材料；不要把每一种旧式约定都视为今天的强制要求
+  direct_fact_scope: structure_vs_control_flow
+  extract_to_rules:
+  - structure_vs_control_flow
+  - module_decomposition
+- id: nassi-shneiderman
+  name: Nassi-Shneiderman / Structured Programming
+  category: methodology
+  authority: Tier-1
+  url: https://www.cs.umd.edu/~ben/publications.html
+  verification: verified-for-registry-v0.4
+  teaches: 结构化的顺序/选择/迭代表达
+  query_when: 当结构化控制组合是学习目标时
+  do_not_use_when: 不适用于任意跨跳转或系统架构视图
+  direct_fact_scope: structured_flow
+  extract_to_rules:
+  - structured_flow
+- id: jsp
+  name: Jackson Structured Programming
+  category: methodology
+  authority: Tier-1
+  url: https://link.springer.com/book/10.1007/978-1-349-22081-6
+  verification: verified-for-registry-v0.4
+  teaches: 以数据结构优先的程序组织方式
+  query_when: 当数据结构强烈决定控制/程序结构时
+  do_not_use_when: 不要假设现代系统就是按照 JSP 设计的
+  direct_fact_scope: data_structure_first
+  extract_to_rules:
+  - data_structure_first
+- id: hipo
+  name: IBM HIPO archival material
+  category: archival
+  authority: Tier-2
+  url: https://www.bitsavers.org/pdf/ibm/generalInfo/GC20-1850-0_Improved_Programming_Technologies_-_An_Overview_1st_ed_197410.pdf
+  verification: verified-for-registry-v0.4
+  teaches: 层次结构 + 输入/处理/输出
+  query_when: 记录遗留系统的函数层次与 IPO 时
+  do_not_use_when: 当该方法会给遗留项目增加不必要的形式负担时
+  direct_fact_scope: 遗留系统方法论
+  extract_to_rules:
+  - legacy_hipo_trigger
+- id: mermaid
+  name: Mermaid
+  category: renderer
+  authority: Tier-2
+  url: https://mermaid.js.org/intro/syntax-reference.html
+  verification: verified-for-registry-v0.4
+  teaches: 基于文本的 Markdown 图表渲染
+  query_when: 当概念性且可版本控制的图已经足够时
+  do_not_use_when: 不得用来替代形式化语义或精确的静态分析输出
+  direct_fact_scope: Renderer 语法/能力
+  extract_to_rules:
+  - renderer_capability
+  - mermaid_selection
+- id: plantuml
+  name: PlantUML
+  category: renderer
+  authority: Tier-2
+  url: https://plantuml.com/
+  verification: verified-for-registry-v0.4
+  teaches: 面向 UML 的文本图表渲染
+  query_when: 当 UML 风格图表需要比 Mermaid 更强的形式化记法支持时
+  do_not_use_when: 不要把 Renderer 的支持能力视为形式符合性的证明
+  direct_fact_scope: UML 渲染
+  extract_to_rules:
+  - renderer_fallback
+- id: graphviz
+  name: Graphviz
+  category: renderer
+  authority: Tier-2
+  url: https://graphviz.org/documentation/
+  verification: verified-for-registry-v0.4
+  teaches: 图布局，尤其是有向图
+  query_when: 当图规模/布局成为问题时
+  do_not_use_when: 不得用于推断图语义
+  direct_fact_scope: 仅用于图渲染
+  extract_to_rules:
+  - graph_layout_escalation
+- id: structurizr
+  name: Structurizr
+  category: renderer
+  authority: Tier-2
+  url: https://docs.structurizr.com/
+  verification: verified-for-registry-v0.4
+  teaches: 以代码描述模型并生成多个视图；C4 导向的模式
+  query_when: 当一份架构模型必须驱动多个视图时
+  do_not_use_when: 不得作为目标代码语义证明
+  direct_fact_scope: 模型/视图分离
+  extract_to_rules:
+  - one_model_multiple_views
+- id: clang-ast
+  name: Clang AST / LibTooling
+  category: analysis_tool
+  authority: Tier-2
+  url: https://clang.llvm.org/docs/LibASTMatchers.html
+  verification: verified-for-registry-v0.4
+  teaches: 语义化 C/C++ AST 匹配与源码位置
+  query_when: 当 grep/文本匹配不足以处理类型/符号/源码关系时
+  do_not_use_when: AST 本身不能证明运行时 ownership 语义
+  direct_fact_scope: 语义化源码提取
+  extract_to_rules:
+  - semantic_source_extraction
+  - source_anchor_precision
+- id: clang-dataflow
+  name: Clang Dataflow
+  category: analysis_tool
+  authority: Tier-2
+  url: https://clang.llvm.org/docs/DataFlowAnalysisIntro.html
+  verification: verified-for-registry-v0.4
+  teaches: 静态数据流分析概念与工具
+  query_when: 当需要源码级数据流/分析精度时
+  do_not_use_when: 不要把静态分析得到的可能性当成已经观察到的运行时执行
+  direct_fact_scope: 数据流分析
+  extract_to_rules:
+  - analysis_backend_selection
+- id: codeql-cpp
+  name: CodeQL for C/C++
+  category: analysis_tool
+  authority: Tier-2
+  url: https://codeql.github.com/docs/codeql-language-guides/codeql-for-cpp/
+  verification: verified-for-registry-v0.4
+  teaches: AST、控制流、数据流以及可查询的源码关系
+  query_when: 当需要精确的源码图或数据流查询时
+  do_not_use_when: CodeQL 的发现结果仍需要结合目标上下文解释
+  direct_fact_scope: 源码分析查询
+  extract_to_rules:
+  - analysis_backend_selection
+  - pointer_semantics_guard
+- id: doxygen
+  name: Doxygen
+  category: analysis_tool
+  authority: Tier-2
+  url: https://www.doxygen.nl/
+  verification: verified-for-registry-v0.4
+  teaches: 生成式文档以及调用/依赖图
+  query_when: 用于快速源码定位以及生成候选图时
+  do_not_use_when: 生成的调用图不自动等于运行时流程
+  direct_fact_scope: 生成图作为输入
+  extract_to_rules:
+  - generated_graph_as_input
+- id: sourcegraph
+  name: Sourcegraph
+  category: analysis_tool
+  authority: Tier-2
+  url: https://sourcegraph.com/docs
+  verification: verified-for-registry-v0.4
+  teaches: 大型仓库源码导航与搜索
+  query_when: 需要在仓库规模上进行符号导航/搜索时
+  do_not_use_when: 工具索引只是导航辅助，不是语义事实
+  direct_fact_scope: 仓库导航
+  extract_to_rules:
+  - navigation_backend
+- id: cpp-guidelines
+  name: C++ Core Guidelines
+  category: language_semantics
+  authority: Tier-1
+  url: https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines
+  verification: verified-for-registry-v0.4
+  teaches: ownership 词汇、RAII、指针/引用指导
+  query_when: 推理通用 C++ ownership/lifetime 概念时
+  do_not_use_when: 绝不能覆盖目标项目行为，也不能从裸指针推断 ownership
+  direct_fact_scope: 语言层防护规则
+  extract_to_rules:
+  - ownership_guardrail
+  - lifetime_vocabulary
+- id: linux-locking
+  name: Linux Kernel Locking Documentation
+  category: project_example
+  authority: Tier-2
+  url: https://www.kernel.org/doc/html/latest/locking/index.html
+  verification: verified-for-registry-v0.4
+  teaches: 真实系统中的锁语义、锁类型与加锁规则
+  query_when: 学习并发文档模式或 Linux 加锁概念时
+  do_not_use_when: 不要将 Linux 锁语义直接迁移到 PostgreSQL/MySQL
+  direct_fact_scope: 并发语义与示例
+  extract_to_rules:
+  - concurrency_guardrail
+- id: lkmm
+  name: Linux Kernel Memory Model
+  category: project_example
+  authority: Tier-2
+  url: https://docs.kernel.org/dev-tools/lkmm/index.html
+  verification: verified-for-registry-v0.4
+  teaches: 内存顺序、屏障以及 litmus 风格推理
+  query_when: 分析底层原子性/顺序约束时
+  do_not_use_when: 仅当内存顺序确实属于当前主题时才相关
+  direct_fact_scope: 顺序约束防护规则
+  extract_to_rules:
+  - memory_ordering_guardrail
+- id: postgres-coding
+  name: PostgreSQL Developer / Coding
+  category: project_example
+  authority: Tier-2
+  url: https://www.postgresql.org/developer/coding/
+  verification: verified-for-registry-v0.4
+  teaches: 项目原生的源码导航与 backend 流程图示例
+  query_when: 构建 PostgreSQL System Atlas 或源码阅读导航时
+  do_not_use_when: PostgreSQL 特有模式不应未经判断就泛化到其他系统
+  direct_fact_scope: 项目特定导航
+  extract_to_rules:
+  - project_specific_source_navigation

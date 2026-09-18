@@ -1,0 +1,28 @@
+version: 0.6.0
+sources:
+  - name: source-code-reading-skill-v0.5.1
+    role: 工程基线
+    status: 主要文件资产基线
+  - name: cognitive-reexpression
+    role: 认知执行来源
+    status: 已合并到核心与参考资料
+excluded_from_merge:
+  - name: cognitive-reexpression-variant
+    reason: "不属于本次请求的合并集合；它没有提供合并设计所必需的独特能力。"
+merge_policy:
+  保留基线文件: true
+  保留能力: true
+  优先增量合并: true
+  允许静默移除: false
+  要求回归: true
+new_capabilities:
+  - 五类知识维度
+  - 认知主轴
+  - 情境化知识
+  - 学习路径
+  - 构建上下文
+  - 性能关注点
+  - 决策理由
+  - 冲突保留
+  - 变更影响
+  - 弱关系降级策略

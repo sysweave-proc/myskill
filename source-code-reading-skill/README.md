@@ -1,6 +1,6 @@
 # source-code-reading-skill
 
-面向大型 C/C++ 项目的「源码阅读知识建模」技能包 —— **七版演进**：v0.1 ~ v0.5.1 是同一场会话在六个时刻冻结的**原始产物**（不是从会话正文重建的），v0.6.0 是**增量合并件**。
+面向大型 C/C++ 项目的「源码阅读知识建模」技能包 —— **七版演进 + 一个中文交付版**：v0.1 ~ v0.5.1 是同一场会话在六个时刻冻结的**原始产物**（不是从会话正文重建的），v0.6.0 是**增量合并件**，v0.6.0-zh 是它的**中文化交付版**。
 
 ## 这是什么
 
@@ -29,6 +29,12 @@ source-code-reading-skill/
 │   │       ├── conversation.md   逐轮对话全文
 │   │       ├── raw-data.json     分享页内嵌的完整会话对象
 │   │       └── snapshot.html     分享页原始 HTML
+│   ├── v0.6.0-zh/         中文交付版：v0.6.0 的中文化 + 13 项交付修复与加固
+│   │   ├── README.md       本版说明：基准判定、修复清单、校验结果、已知边界
+│   │   ├── skill/         中文技能包文件树（可用版，61 文件）
+│   │   ├── source.zip      本版打包件（= skill/，权威字节）
+│   │   ├── source-code-reading.skill   官方格式分发包（= skill/）
+│   │   └── original-delivery/  交付的原始中文 zip（未修，仅作留证）
 │   └── …                  v0.6.0 无 conversation/，其过程记录在包内 skill/MERGE_DECISION.md
 ├── skill-ds/              非谱系产物：读后重写版，v0.6.0 的 cognitive_execution_source
 │   ├── README.md          来龙去脉、七条主张、与 v0.5.1 的取舍
@@ -52,6 +58,7 @@ source-code-reading-skill/
 | v0.5 | 执行闸门与瘦身 | 12 | 748 | **整包重写并大幅瘦身**（-66% 文件、-72% 行数）：包内只留执行协议（Gate 0~6、L0~L3、反过度设计） |
 | v0.5.1 | 非回归修复 | 50 | 3,441 | 回到 v0.4 基线**增量合并**：恢复丢失资产 + 补渐进执行闸门与「不许静默丢能力」的演进纪律 |
 | v0.6.0 | 认知 × 工程合并 | 59 | 4,418 | **合并件**（非会话冻结）：以 v0.5.1 为文件基线，并入 `skill-ds` 的认知协议；+9 新增 / 9 覆写 / **0 删除** |
+| v0.6.0-zh | 中文化交付 | 61 | 4,700 | v0.6.0 的**完整中文化**（基准是**冻结原件**，非补丁版）+ 13 项交付修复与加固（frontmatter 校验、受控标识统一、**触发面重写**、新增**术语表**、撞号消歧、**去除全部跨 skill 引用**）；+2 新增（`TRANSLATION_NOTE.md`、`references/glossary.md`）/ 0 删除 |
 
 **关键转折**：`v0.4 → v0.5` 是**回归**而非演进——35 个文件重建成 12 个，`knowledge-sources/`、`evolution/`、`cases/`、`references/diagrams/` 整体消失。`v0.5.1` 修回了它，并把「**新版本默认必须是 merge，不是 rewrite；删任何东西都要留下 reason / replacement / regression evidence**」固化成硬约束。
 
@@ -64,6 +71,7 @@ source-code-reading-skill/
    - v0.1 / v0.2 / v0.3 / v0.4 / v0.5.1 用 `description: >-` → 同一根因；为保住各版冻结字节，**不回溯修改**。
    - v0.5 把 `description` 整个删掉、换成 `summary`，报 `Missing 'description' in frontmatter`。
    - v0.6.0 **已修**：`SKILL.md` 改为 `description: |-`，实测输出 `Skill is valid!`（描述正文未改一字）；已安装的 user skill 已同步。该修复为 post-freeze patch，故 `versions/v0.6.0/skill/` 与其 `source.zip` 不再逐字节一致，详见 `versions/v0.6.0/README.md` 备注。
+   - **订正（2026-09-18 实测）**：上面这条「已修」对当时的校验器成立，但**当前** `quick_validate.py` 已把允许键收紧为 `{name, description, license, allowed-tools, metadata}`，顶层 `version` 会被直接判非法（`Unexpected key(s) ... version`），且**先于** description 检查——所以 v0.1–v0.6.0 **全部**仍然过不了校验，这次的阻塞项与 `>-` 无关。`versions/v0.6.0-zh/` 已修（`version` 移入 `metadata.version`）；各原版仍不回溯修改，以保住冻结字节。
 2. **v0.4 的行尾与其他版本不齐**：其文件以单个 `\n` 结尾。早前从会话正文重建的那一版给每个文件多补了一个结尾空行，这正是 v0.4 行数出现 2,662 与 2,697 两个口径的原因。
 
 ## 保真度校验（已完成）
