@@ -6,7 +6,9 @@
 
 | Skill | 说明 | 版本 |
 |---|---|---|
-| [`source-code-reading-skill/`](source-code-reading-skill/) | 面向大型 C/C++ 项目的「源码阅读知识建模」技能包，含六版演进、原始 zip、解压产物与对话原始材料 | v0.1 → v0.5.1 |
+| [`source-code-reading-skill/`](source-code-reading-skill/) | 面向大型 C/C++ 项目的「源码阅读知识建模」技能包：`versions/` 存七版演进（含原始 zip、解压产物、对话原始材料），顶层 `skill-ds/` 存非谱系的对照版（v0.6.0 的合并输入） | v0.1 → v0.6.0 |
+
+> **变动记录**：原顶层 `skill-ds/` 已移入 `source-code-reading-skill/skill-ds/`（它不属于版本谱系，保留作 v0.6.0 的对照与输入材料）；`skill-ds-chatgpt/` 已删除（质量不达标）。
 
 ## 目录约定
 
@@ -21,6 +23,7 @@
 │       ├── skill/        该版交付产物（文件树，可读）
 │       ├── source.zip      该版原始打包（权威字节，勿改）
 │       └── conversation/   该版的讨论过程（会话全文、原始数据、页面快照）
+├── <对照目录>/          可选：不属于版本谱系的对照产物（读后重写、他源再表达等），与 versions/ 平铺
 └── docs/               跨版本的审计报告、设计说明等
 ```
 

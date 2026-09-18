@@ -1,0 +1,52 @@
+source_context:
+  repository: ""
+  revision: ""
+  subject: ""
+  core_questions: []
+  included_modules: []
+  excluded_modules: []
+  architecture_position:
+    system: ""
+    subsystem: ""
+    layer: ""
+    paths: []
+    concerns: []
+  symbols: []
+
+knowledge:
+  entities: []
+  relations: []
+  flows: []
+  states: []
+  lifecycles: []
+  concurrency: []
+  constraints: []
+  claims: []
+  evidence: []
+  traces: []
+
+pattern_profile:
+  core_question: ""
+  dominant:
+    name: ""
+    reason: ""
+  secondary: []
+
+representation:
+  primary:
+    family: ""
+    method: ""
+    renderer: ""
+    purpose: ""
+  secondary: []
+  source_anchors: []
+  snippets: []
+  exclusions: []
+
+validation:
+  structural: pass
+  semantic: pass
+  traceability: pass
+  representation: pass
+  reader_navigation: pass
+  architecture_consistency: pass

@@ -1,0 +1,28 @@
+version: 0.6.0
+sources:
+  - name: source-code-reading-skill-v0.5.1
+    role: engineering_baseline
+    status: primary_file_asset_baseline
+  - name: skill-ds
+    role: cognitive_execution_source
+    status: merged_into_core_and_references
+excluded_from_merge:
+  - name: skill-ds-chatgpt
+    reason: "Not part of the requested merge set; it did not provide a distinct capability required for the combined design."
+merge_policy:
+  preserve_baseline_files: true
+  preserve_capabilities: true
+  prefer_additive_merge: true
+  allow_silent_removal: false
+  require_regression: true
+new_capabilities:
+  - five knowledge dimensions
+  - cognitive spine
+  - situated knowledge
+  - learning path
+  - build context
+  - performance concern
+  - decision rationale
+  - conflict preservation
+  - change impact
+  - weaker-relation fallback

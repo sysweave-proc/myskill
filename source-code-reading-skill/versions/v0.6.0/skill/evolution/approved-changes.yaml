@@ -1,0 +1,12 @@
+candidate_version: 0.6.0
+approved_changed_baseline_files:
+- SKILL.md
+- README.md
+- CHANGELOG.md
+- EVOLUTION_AUDIT.md
+- evolution/evolution-policy.md
+- evolution/capability-inventory.md
+- evolution/approved-changes.yaml
+- evolution/approved-removals.yaml
+- references/knowledge-model.md
+approved_removals: []

@@ -1,0 +1,23 @@
+subject: BufferLookup
+architecture:
+  subsystem: Storage / Buffer Manager
+  path: Page Read Path
+core_question: "BufferTag 如何定位到具体 Buffer，并在哪里发生并发保护？"
+pattern:
+  dominant: Resource
+  secondary: [Structural, Concurrency]
+representation:
+  primary:
+    family: Resource
+    method: Resource / Index Map
+    renderer: Mermaid
+  secondary:
+    - family: Structural
+      method: Entity Relationship
+      renderer: Mermaid
+    - family: Concurrency
+      method: Synchronization Graph
+      renderer: Mermaid
+exclude:
+  - full call graph
+  - unrelated replacement policy
