@@ -1,0 +1,6 @@
+candidate_version: 0.5.1
+approved_changed_baseline_files:
+- SKILL.md
+- README.md
+- knowledge-sources/README.md
+approved_removals: []

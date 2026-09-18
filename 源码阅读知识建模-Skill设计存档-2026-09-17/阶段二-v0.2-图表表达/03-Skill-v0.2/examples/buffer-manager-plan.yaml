@@ -1,0 +1,64 @@
+source_context:
+  repository: postgresql
+  revision: "<commit-or-tag>"
+  subject: "Buffer lookup"
+  core_questions:
+    - "BufferTag 如何定位到具体 Buffer？"
+    - "并发 lookup/update 由什么机制保护？"
+  included_modules:
+    - "Buffer Manager"
+    - "BufTable"
+  excluded_modules:
+    - "WAL"
+    - "filesystem"
+    - "replacement policy"
+
+knowledge:
+  entities:
+    - id: "postgresql::BufferTag"
+      kind: struct
+    - id: "postgresql::BufTable"
+      kind: hash-table
+    - id: "postgresql::BufferDesc"
+      kind: struct
+  relations:
+    - subject: "BufferTag"
+      predicate: "indexes"
+      object: "BufTable"
+    - subject: "BufTable"
+      predicate: "locates"
+      object: "BufferDesc"
+  concurrency:
+    - shared_object: "BufTable"
+      synchronization: "mapping partition lock"
+      protected_state: "mapping entries"
+  claims:
+    - statement: "Buffer lookup uses BufferTag as the logical page identity."
+      type: FACT
+      confidence: HIGH
+      evidence: []
+
+pattern_profile:
+  core_question: "如何从逻辑 page identity 高效定位到 shared buffer，并在并发访问下保持 mapping 正确？"
+  dominant:
+    name: "Resource"
+    reason: "核心理解问题是资源定位与管理，而不是单纯结构定义。"
+  secondary:
+    - name: Structural
+      reason: "需要理解 BufferTag、BufTable、BufferDesc 的关系。"
+    - name: Concurrency
+      reason: "mapping 的并发访问影响 lookup/update 语义。"
+
+representation:
+  primary:
+    type: "Management / Resource"
+    purpose: "展示 identity → hash/index → buffer descriptor 的管理路径。"
+  secondary:
+    - type: "Entity Relationship"
+      purpose: "展示核心对象关系。"
+    - type: "Synchronization"
+      purpose: "展示 mapping protection。"
+  source_anchors: []
+  snippets: []
+  exclusions:
+    - "full Buffer Manager call graph"

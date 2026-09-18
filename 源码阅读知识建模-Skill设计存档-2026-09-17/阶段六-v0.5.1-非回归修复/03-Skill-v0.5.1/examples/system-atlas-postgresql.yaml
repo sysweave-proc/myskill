@@ -1,0 +1,25 @@
+system: PostgreSQL
+architecture_spine:
+  - id: frontend
+    role: protocol, parsing, session entry
+  - id: execution
+    role: planning and executor runtime
+  - id: transaction
+    role: transaction/locking/concurrency semantics
+  - id: storage
+    role: access methods, buffers, storage manager
+  - id: persistence
+    role: WAL, files, IO
+paths:
+  - id: query_path
+    steps: [frontend, execution, storage]
+  - id: page_read_path
+    steps: [execution, storage, persistence]
+  - id: transaction_path
+    steps: [execution, transaction, storage, persistence]
+concerns:
+  - concurrency
+  - memory
+  - durability
+  - performance
+note: "Illustrative architecture scaffold; validate against the target revision before treating any relation as a repository fact."
