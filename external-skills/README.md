@@ -27,7 +27,7 @@
 1. 6 个插件＋市场注册表，与上游**逐文件零差异**。
 2. `core-tools` 的 26 个上游文件 `md5sum -c` **26/26 OK**。
 3. 上游 `commits/main` 仍为 `fc1a336b`——**距今 4 个月未更新**，本基线即最新。
-4. 全镜像 `${CLAUDE_PLUGIN_ROOT}` 引用实检：154 处中 125 处解析为真实文件，**29 处经甄别全部为文档示例/占位符**，无隐藏依赖缺口。
+4. 全镜像 `${CLAUDE_PLUGIN_ROOT}` 引用实检：**87 处中 82 处**解析为真实文件，其余 **5 处**经甄别全为文档示例/占位符（4 处示例 hook 脚本 + 1 处本 README 的引用文本），无隐藏依赖缺口。*（全量收录时的口径为 154 / 125 / 29）*
 
 ---
 
@@ -40,22 +40,21 @@
 3. **包内结构一律原样** —— `skills/` / `agents/` / `hooks/` 是插件规范的**默认发现位置**；改名即多个 skill 全部扫不到。
 
 ```
-external-skills/                            152 文件
+external-skills/                            132 文件
 ├── README.md                               ← 本文件（索引 + 更新基线）
 ├── skills/                                  ← A 类 · 本机安装的独立 skill（叶子，根有 SKILL.md）
 │   ├── codebase-reading/     SKILL.md + references/ ×3
 │   └── deep-read/            SKILL.md + references/ ×1
 │
-└── agent-alchemy-marketplace/              ← B 类 · 上游市场整包镜像（145 文件）
+└── agent-alchemy-marketplace/              ← B 类 · 上游市场整包镜像（125 文件）
     ├── README.md                           （本地文档，非上游文件）
     ├── .claude-plugin/marketplace.json     ← 市场注册表（版本号 source of truth）
     ├── core-tools/    26 + PROVENANCE.md
     ├── claude-tools/  9
     ├── sdd-tools/     41
-    ├── plugin-tools/  20
     ├── tdd-tools/     21
     └── dev-tools/     25
-        （上游 `extensions/` 未收录，见第五节）
+        （`plugin-tools/` 与上游 `extensions/` 未收录，见第五节）
 ```
 
 判别口径（一眼可验）：**根下直接有 `SKILL.md` = 独立 skill；根下是 `agents/` + `hooks/` + `skills/` 三件套 = 插件包。**
@@ -79,16 +78,15 @@ external-skills/                            152 文件
 
 ---
 
-## 四、B 类 · 市场镜像（6 插件 ＋ 注册表）
+## 四、B 类 · 市场镜像（5 插件 ＋ 注册表）
 
-市场共 **9 个插件**，本镜像归档 **6 个**；未归档的 3 个插件与整棵 `extensions/` 见第五节。
+市场共 **9 个插件**，本镜像归档 **5 个**；未归档的 4 个插件与整棵 `extensions/` 见第五节。
 
 | 包 | 文件 | md 行 | 包指纹（32 位） |
 |---|---|---|---|
 | [`core-tools/`](agent-alchemy-marketplace/core-tools/) | 26 | 5,774 | `808192241ec2c53ced9bd83227279279` |
 | [`claude-tools/`](agent-alchemy-marketplace/claude-tools/) | 9 | 3,033 | `37c98b0026d9d87e376684c7a4bd147b` |
 | [`sdd-tools/`](agent-alchemy-marketplace/sdd-tools/) | 41 | 12,716 | `d05f987a0964c02cd90b512a7234fba2` |
-| [`plugin-tools/`](agent-alchemy-marketplace/plugin-tools/) | 20 | 11,770 | `237382f5562b8482eb55bdd188ebdad9` |
 | [`tdd-tools/`](agent-alchemy-marketplace/tdd-tools/) | 21 | 8,961 | `fcfafcbfd6d2b114663a85675b0648a6` |
 | [`dev-tools/`](agent-alchemy-marketplace/dev-tools/) | 25 | 5,699 | `a9c9403919c7a3154afc000922a2f00b` |
 | [`.claude-plugin/`](agent-alchemy-marketplace/.claude-plugin/) | 1 | — | `bc0236b5d4cbd3baedcda888549e1419` |
@@ -108,19 +106,20 @@ cd <包目录> && find . -type f ! -name PROVENANCE.md | LC_ALL=C sort | xargs m
 ```
 sdd-tools ──(read)──> claude-tools        27 处引用，已闭合 ✓
 dev-tools ──(read)──> core-tools           4 处引用，已闭合 ✓
-plugin-tools ─(read)─> .claude-plugin/marketplace.json   5 处引用，已闭合 ✓
-plugin-tools ─(read)─> 其他各包（移植时按需读取）
 core-tools ──(read)──> 无包外依赖（唯一外引 Context7 MCP，不在分析链上）
+tdd-tools / claude-tools / .claude-plugin 均无包内依赖
+已排除的 plugin-tools 是叶子 —— 其余 5 个包对它零引用（已实测）✓
 ```
 
 ---
 
-## 五、未收录的部分（3 个插件 ＋ 整个 `extensions/`）
+## 五、未收录的部分（4 个插件 ＋ 整个 `extensions/`）
 
-**插件** —— 市场共 9 个，本镜像归档 6 个：
+**插件** —— 市场共 9 个，本镜像归档 5 个：
 
 | 插件 | 版本 | 文件/行数 | 未收录理由 |
 |---|---|---|---|
+| `plugin-tools` | 0.2.6 | 20 / 11,770 | 插件移植工具链（适配器规范 / 不兼容处理 / OpenCode 适配器范例）。**叶子包 —— 其余 5 个包对它零引用**，删除不断任何链；2026-09-19 按用户要求排除。排除前指纹 `237382f5562b8482eb55bdd188ebdad9` |
 | `opencode-tools` | 0.1.3 | 18 / 3,660 | 跨平台移植**范例**（含 Claude↔OpenCode 差异表）。非任何已归档包的依赖，需要时再取 |
 | `cs-tools` | 0.1.0 | 11 / 3,471 | 竞赛编程 / LeetCode，与本仓无关 |
 | `git-tools` | 0.1.0 | 2 / 159 | Conventional Commits，几乎是空壳 |
@@ -140,8 +139,10 @@ core-tools ──(read)──> 无包外依赖（唯一外引 Context7 MCP，不
 | # | 位置 | 偏差 | 说明 |
 |---|---|---|---|
 | 1 | `core-tools/PROVENANCE.md` | **上游无此文件**，本地新增 | 下载流程生成的溯源记录（含逐文件 md5）。因此对 `core-tools/` 做 `diff -rq` 会**稳定地多出这 1 行差异**，属预期，不是污染 |
-| 2 | `.claude-plugin/` | **放置层级与上游差一层** | 上游真实路径是 `<repo>/.claude-plugin/marketplace.json`；本镜像拍平了上游的 `claude/` 这一层，故落在 `agent-alchemy-marketplace/.claude-plugin/`。`plugin-tools` 里 `${CLAUDE_PLUGIN_ROOT}/../../.claude-plugin/` 的引用深度因此**少一级**，按"镜像根"理解即可 |
+| 2 | `.claude-plugin/` | **放置层级与上游差一层** | 上游真实路径是 `<repo>/.claude-plugin/marketplace.json`；本镜像拍平了上游的 `claude/` 这一层，故落在 `agent-alchemy-marketplace/.claude-plugin/`。因此凡引用它时深度**少一级**，按「镜像根」理解即可（原消费者 `plugin-tools` 已排除，此条留给日后取回时参考） |
 | 3 | `skills/codebase-reading`、`skills/deep-read` | **非上游原样** | 从安装位回收，`description` 已追加本地中文触发词；上游未定位，无原件可比 |
+
+> **注册表保留说明**：`.claude-plugin/marketplace.json` 在镜像内的**唯一消费者**（`plugin-tools`）已排除，但它本身**保留** —— 它是市场的权威清单（9 个插件 + 版本号），是第四节指纹表与镜像 README 版本对照表的可核验来源，且只有 1 个文件。属主动保留，不是遗漏。
 
 ### 权限位（mode）也是基线的一部分
 
@@ -181,7 +182,7 @@ sdd-tools  LC_ALL=C sort   d05f987a0964c02cd90b512a7234fba2   ← 唯一有效�
 cd /tmp && curl -sSL -o aa.zip https://codeload.github.com/sequenzia/agent-alchemy/zip/refs/heads/main
 python3 -c "import zipfile;zipfile.ZipFile('aa.zip').extractall('aa')"
 U=/tmp/aa/agent-alchemy-main
-for p in core-tools claude-tools sdd-tools plugin-tools tdd-tools dev-tools; do
+for p in core-tools claude-tools sdd-tools tdd-tools dev-tools; do
   echo "== $p"; diff -rq --exclude=PROVENANCE.md "$U/claude/$p" \
     /home/zhq/mydisk/myskill/external-skills/agent-alchemy-marketplace/$p
 done
@@ -196,8 +197,8 @@ curl -sS https://api.github.com/repos/sequenzia/agent-alchemy/commits/main | pyt
 cd /home/zhq/mydisk/myskill/external-skills
 for p in skills/codebase-reading skills/deep-read \
          agent-alchemy-marketplace/core-tools agent-alchemy-marketplace/claude-tools \
-         agent-alchemy-marketplace/sdd-tools agent-alchemy-marketplace/plugin-tools \
-         agent-alchemy-marketplace/tdd-tools agent-alchemy-marketplace/dev-tools \
+         agent-alchemy-marketplace/sdd-tools agent-alchemy-marketplace/tdd-tools \
+         agent-alchemy-marketplace/dev-tools \
          agent-alchemy-marketplace/.claude-plugin; do
   printf '%-52s ' "$p"
   (cd "$p" && find . -type f ! -name PROVENANCE.md | LC_ALL=C sort | xargs md5sum | md5sum | cut -c1-32)
@@ -226,6 +227,7 @@ done
 | 2026-09-19 | 本文档重写 | 与目录实际严重不符 → 对齐现状 | 原版引用已删除的 `CATALOG.md`、`agent-alchemy-core-tools/`、`skills/codebase-analysis/` |
 | 2026-09-19 | **权限位校正（mode）** | `100755` × 155 → `100644` × 163 ＋ `100755` × 9 | 与上游 git tree `fc1a336b` 的 `mode` 字段逐文件比对，修正 153 处，复查不一致 0 |
 | 2026-09-19 | **排除 `extensions/`** | 20 文件 → 无 | 按用户要求；它既非 skill 也非插件，不在基准范围。镜像 165 → **145** 文件（上游原样 163 → **143**）；7 个 JSON Schema 的取回方式与排除前指纹（`270378ae…`）已留档 |
+| 2026-09-19 | **排除 `plugin-tools`** | 20 文件 / 11,770 行 → 无 | 按用户要求。实测为**叶子包**（其余 5 包对它零引用），删除不断任何链。镜像 145 → **125** 文件（上游原样 143 → **123**），全仓 132 文件；排除前指纹（`237382f5…`）已留档 |
 
 ---
 

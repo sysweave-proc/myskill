@@ -108,9 +108,10 @@ cd /home/zhq/mydisk/myskill/external-skills/agent-alchemy-marketplace/sdd-tools 
 #    注：本镜像未收录 extensions/，此项仅在需要取回 schema 时使用（见第六节）
 ```
 
-**归档范围**：**6 个插件 + 市场注册表**（共 145 文件，其中上游原样文件 143）。未归档的有 `opencode-tools`、`cs-tools`、`git-tools` 三个插件（用途见第四节），以及**整棵 `extensions/`**——其唯一子目录 `vscode/`（20 文件）已于 2026-09-19 按用户要求排除，说明与恢复方式见第六节。
+**归档范围**：**5 个插件 + 市场注册表**（共 125 文件，其中上游原样文件 123）。未归档的有 `plugin-tools`、`opencode-tools`、`cs-tools`、`git-tools` 四个插件（用途见第四节），以及**整棵 `extensions/`**——其唯一子目录 `vscode/`（20 文件）已于 2026-09-19 按用户要求排除，说明与恢复方式见第六节。
 
 > 2026-09-19 补齐：`claude-tools`（`sdd-tools` 的 27 处跨插件引用原为断链）与 `.claude-plugin/marketplace.json`（`plugin-tools` 的 5 处引用）。
+> 2026-09-19 排除：`plugin-tools`（叶子包，其余 5 个包对它零引用，删除不断任何链）。注册表**保留**，理由见第八节注。
 
 **版本对照表**（截至 `fc1a336b`，来自 marketplace.json）：
 
@@ -130,13 +131,13 @@ cd /home/zhq/mydisk/myskill/external-skills/agent-alchemy-marketplace/sdd-tools 
 
 ## 四、9 个插件全览
 
-市场共 **9 个插件**。本目录归档了 **6 个**（★ 标记），其余 3 个未归档但列出用途备查。
+市场共 **9 个插件**。本目录归档了 **5 个**（★ 标记），其余 4 个未归档但列出用途备查。
 
 | 插件 | 版本 | 文件 | md 行数 | 用途 | 场景 |
 |---|---|---|---|---|---|
 | ★ `core-tools` | 0.2.3 | 26 (+PROVENANCE) | 5,774 | 代码库分析、多智能体深度探索、语言模式 | **读懂**一个陌生/已有代码库 |
 | ★ `sdd-tools` | 0.2.11 | 41 | 12,716 | 规格驱动开发全流水线 | **规划并建造**新功能 |
-| ★ `plugin-tools` | 0.2.6 | 20 | 11,770 | 插件移植、适配器校验、生态健康 | **把 Claude 插件搬到别的平台** |
+| `plugin-tools` | 0.2.6 | 20 | 11,770 | 插件移植、适配器校验、生态健康 | 把 Claude 插件搬到别的平台（**2026-09-19 排除**，见第五节） |
 | ★ `tdd-tools` | 0.2.1 | 21 | 8,961 | 测试驱动开发（RED-GREEN-REFACTOR） | **用测试驱动实现**，保证质量 |
 | ★ `dev-tools` | 0.3.4 | 25 | 5,699 | 功能开发、代码评审、架构模式、文档、changelog | **日常开发流程**辅助 |
 | ★ `claude-tools` | 0.2.5 | 9 | 3,033 | Claude Tasks 与 Agent Teams 的参考手册 | 理解 Claude 原生任务/团队机制；**已归档**（sdd-tools 硬依赖） |
@@ -218,7 +219,11 @@ SDD 把中间产物显式化：
 
 ---
 
-### ★ 3. `plugin-tools` —— 插件移植工具链（已归档，与你目标最相关）
+### 3. `plugin-tools` —— 插件移植工具链（**本镜像未收录**）
+
+> ⚠️ **本镜像不含此包**：2026-09-19 按用户要求排除。它是**叶子包** —— 其余 5 个包对它零引用（已实测），删除不断任何依赖链。
+> **未收录 ≠ 不可得**：上游 `fc1a336b` 一份 zip 取 `claude/plugin-tools/` 即可；排除前指纹 `237382f5562b8482eb55bdd188ebdad9`（20 文件 / 11,770 行）用于判断日后取回件是否同版本。
+> **本节内容保留**，因为它是全市场**唯一一份把「跨平台移植」系统化的资料**：适配器格式规范、不兼容项解法、依赖闭包检查，外加一个**已完成的 OpenCode 适配器范例**。
 
 **定位**：把 Claude 插件/AI 资产移植到另一个平台。**它的工作就是你要做的工作。**
 
@@ -420,35 +425,34 @@ schema 为 `additionalProperties: false`，因此任何越界字段都会被标�
    │  tdd-cycle / generate-tests  │   │  bug-killer / docs    │
    └─────────────────────────────┘   └──────────────────────┘
 
-   plugin-tools（横向能力）：把上面任何一个搬到别的平台
+   plugin-tools（横向能力）：把上面任何一个搬到别的平台 —— 本镜像未收录
    claude-tools（底层参考）：所有插件依赖的 Claude 原语文档
-```
+   ```
 
-**对你（改造 WorkBuddy 版）的组合建议**：
+   **对你（改造 WorkBuddy 版）的组合建议**：
 
-1. **core-tools** = 目标能力本体（要改造的）
-2. **plugin-tools** = 改造工具（`adapters/workbuddy.md` 照 `opencode.md` 写）
-3. **claude-tools** = 差异对照（明确要替换掉哪些原语）
-4. **opencode-tools** = 策略参考（看作者如何处理同类缺口）
-5. **sdd-tools / tdd-tools / dev-tools** = 后续扩展储备
+   1. **core-tools** = 目标能力本体（要改造的）
+   2. **plugin-tools** = 改造工具（`adapters/workbuddy.md` 照 `opencode.md` 写）—— **本镜像未收录**，需要时按第六节方式取回 `claude/plugin-tools/`
+   3. **claude-tools** = 差异对照（明确要替换掉哪些原语）
+   4. **opencode-tools** = 策略参考（看作者如何处理同类缺口）
+   5. **sdd-tools / tdd-tools / dev-tools** = 后续扩展储备
 
 ---
 
 ## 八、目录结构与指纹
 
 ```
-agent-alchemy-marketplace/                    145 files（上游原样 143）
+agent-alchemy-marketplace/                    125 files（上游原样 123）
 ├── README.md                                 ← 本文件（本地文档）
 ├── .claude-plugin/
 │   └── marketplace.json                      1 file   指纹 bc0236b5d4cbd3baedcda888549e1419
 ├── core-tools/              26 files /  5,774 md 行   指纹 808192241ec2c53ced9bd83227279279  (+PROVENANCE.md)
 ├── claude-tools/             9 files /  3,033 md 行   指纹 37c98b0026d9d87e376684c7a4bd147b
 ├── sdd-tools/               41 files / 12,716 md 行   指纹 d05f987a0964c02cd90b512a7234fba2
-├── plugin-tools/            20 files / 11,770 md 行   指纹 237382f5562b8482eb55bdd188ebdad9
 ├── tdd-tools/               21 files /  8,961 md 行   指纹 fcfafcbfd6d2b114663a85675b0648a6
 └── dev-tools/               25 files /  5,699 md 行   指纹 a9c9403919c7a3154afc000922a2f00b
 
-（`extensions/` 未收录，见第六节）
+（`plugin-tools/` 与 `extensions/` 未收录，见第五节与第六节）
 ```
 
 **全部文件均从上游原样复制，未做任何修改。**（插件来自 `claude/<插件名>/`，注册表来自 `.claude-plugin/`）
@@ -486,13 +490,13 @@ find . -type f ! -name PROVENANCE.md | LC_ALL=C sort | xargs md5sum | md5sum | c
 
 已识别的改造障碍（详见 `../README.md`）：
 
-1. **`${CLAUDE_PLUGIN_ROOT}` 路径变量** —— 全镜像实测 **251 处、分布 43 个文件**，WorkBuddy 不展开此变量
+1. **`${CLAUDE_PLUGIN_ROOT}` 路径变量** —— 全镜像实测 **104 处、分布 27 个文件**（排除 `plugin-tools` 前的口径为 251 处 / 43 文件），WorkBuddy 不展开此变量
 2. **Agent Teams 原语** —— `TeamCreate` / `TeamDelete` / `SendMessage` / `Task(model: opus|sonnet)` 在 WorkBuddy 中不存在，需映射为 `Task` 子代理 + 磁盘任务记录。**这套原语的完整语义在 [`claude-tools/`](claude-tools/) 里（3033 行）—— 改造前先读它，才能明确"要替代掉什么"；`sdd-tools` 的 27 处引用也全部指向它**
 3. **目录约定** —— `.claude/sessions/`、`~/.claude/tasks/`、`.claude/agent-alchemy.local.md` 等路径需改为 WorkBuddy 的 `.workbuddy/` 树
 4. **`AskUserQuestion` 在子代理中不可用**（这条在 OpenCode 说明里也出现过，需实测 WorkBuddy 行为）
 5. **Context7 MCP 依赖** —— `interview-me` / `interview-researcher` 用到 `mcp__context7__*`，非 core-tools 分析链上的必需项
 
-**改造时优先参考**：`plugin-tools/references/adapters/opencode.md`（适配器范例）+ `plugin-tools/references/adapter-format.md`（格式规范）+ `plugin-tools/references/incompatibility-resolver.md`（不兼容处理）。
+**改造时优先参考** —— 以下三者**都在本镜像未收录的 `plugin-tools/` 内**，需按第六节方式取回 `claude/plugin-tools/`：`references/adapters/opencode.md`（适配器范例）+ `references/adapter-format.md`（格式规范）+ `references/incompatibility-resolver.md`（不兼容处理）。
 
 ---
 
