@@ -138,6 +138,20 @@ core-tools ──(read)──> 无包外依赖（唯一外引 Context7 MCP，不
 | 2 | `.claude-plugin/` | **放置层级与上游差一层** | 上游真实路径是 `<repo>/.claude-plugin/marketplace.json`；本镜像拍平了上游的 `claude/` 这一层，故落在 `agent-alchemy-marketplace/.claude-plugin/`。`plugin-tools` 里 `${CLAUDE_PLUGIN_ROOT}/../../.claude-plugin/` 的引用深度因此**少一级**，按"镜像根"理解即可 |
 | 3 | `skills/codebase-reading`、`skills/deep-read` | **非上游原样** | 从安装位回收，`description` 已追加本地中文触发词；上游未定位，无原件可比 |
 
+### 权限位（mode）也是基线的一部分
+
+上游该子树是 `100644` × 154 + `100755` × 9 —— **可执行者只有各插件的 `hooks/*.sh` 与 `sdd-tools/skills/execute-tasks/scripts/poll-for-results.sh`**。本镜像此前把 155 个文件误标为可执行，已于 2026-09-19 按上游 git tree（`fc1a336b`）的 `mode` 字段逐文件校正（修正 153 处，复查不一致为 0）。
+
+> ⚠️ **`diff -rq` 不比较权限**，所以权限漂移不会在常规内容比对里暴露，必须单独核验：
+
+```bash
+# 权限核验（仓库根执行）：期望 100644 × 163 + 100755 × 9
+git ls-files -s external-skills | awk '{print $1}' | sort | uniq -c
+#  163 100644
+#    9 100755
+# 100755 的数量一变，即为权限位漂移
+```
+
 ### 指纹算法的两个坑（都曾导致记录出错）
 
 **坑 1 · `sort` 的 locale** —— 这是最隐蔽的一个。`find | sort | xargs md5sum` 把排序后的文件名一起喂给 md5，**排序一变，整包指纹就变**。实测同一目录同一时刻：
@@ -205,6 +219,7 @@ done
 | 2026-09-19 | **指纹口径统一（locale）** | 环境相关 `sort` → **`LC_ALL=C sort`** | 同一目录实测两种排序得出不同指纹，旧值不可复现，全部作废 |
 | 2026-09-19 | **指纹口径统一（自引用）** | 含 `PROVENANCE.md` → 一律排除 | 废弃 `efe0cbba…`，全部按新口径重算 |
 | 2026-09-19 | 本文档重写 | 与目录实际严重不符 → 对齐现状 | 原版引用已删除的 `CATALOG.md`、`agent-alchemy-core-tools/`、`skills/codebase-analysis/` |
+| 2026-09-19 | **权限位校正（mode）** | `100755` × 155 → `100644` × 163 ＋ `100755` × 9 | 与上游 git tree `fc1a336b` 的 `mode` 字段逐文件比对，修正 153 处，复查不一致 0 |
 
 ---
 
