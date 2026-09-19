@@ -17,7 +17,7 @@
 
 | 版本 | 上游版本 | 主题 | 状态 | 包指纹 |
 |---|---|---|---|---|
-| [`v0.2.3-cb.1`](versions/v0.2.3-cb.1/) | `0.2.3` | 首次移植为 CodeBuddy 插件（全功能：skill + agent + command + hook） | **冻结基准** | `10b4ab24ed67f3b34424eaa8ab313bab` |
+| [`v0.2.3-cb.1`](versions/v0.2.3-cb.1/) | `0.2.3` | 首次移植为 CodeBuddy 插件（全功能：skill + agent + command + hook） | **冻结基准** | `2a25c41b8b418c0e1b1967053412d66e` |
 
 > `-cb.N` 中的 `N` 只在**上游版本不变、本产物需修订**时递增；上游版本变化时改为 `<新上游版本>-cb.1`。
 > 旧版本目录**不再原地修改** —— 校准靠的是"基准不变"，改动一律进新版本目录。
@@ -37,6 +37,7 @@ core-tools-codebuddy/
         ├── verify.sh                一键校准脚本
         └── plugin/                  ← **交付产物**（CodeBuddy 插件本体，安装这个目录）
             ├── .codebuddy-plugin/plugin.json
+            ├── README.md            **使用手册**（随插件安装，非上游内容）
             ├── commands/            3 个斜杠命令
             ├── skills/              6 个 skill
             ├── agents/              4 个 agent
@@ -46,6 +47,8 @@ core-tools-codebuddy/
 ## 三、安装
 
 ### 方式 A：作为插件安装（推荐，全功能）
+
+> **一键脚本**：`bash core-tools-codebuddy/install.sh`（幂等：先校准基准 → 备份配置 → 建市场 → 注册 → 启用 → 校验；`--uninstall` 卸载）。手动步骤如下：
 
 ```bash
 PLUGIN=/home/zhq/mydisk/myskill/core-tools-codebuddy/versions/v0.2.3-cb.1/plugin
@@ -74,7 +77,21 @@ cat > "$MKT/.codebuddy-plugin/marketplace.json" <<'JSON'
 JSON
 ```
 
-3. 在 `~/.codebuddy/settings.json` 的 `enabledPlugins` 中加入（保留已有条目，不要整份覆盖）：
+3. **注册市场** —— 在 `~/.codebuddy/plugins/known_marketplaces.json` 加入条目。**这步最容易漏，缺它市场不会被识别**：
+
+```json
+{
+  "agent-alchemy-local": {
+    "type": "directory",
+    "source": { "source": "directory", "path": "<上面 $MKT 的绝对路径>" },
+    "installLocation": "<同上>",
+    "description": "Local marketplace: agent-alchemy-local",
+    "isBuiltIn": false
+  }
+}
+```
+
+4. 启用插件 —— 在 `~/.codebuddy/settings.json` 的 `enabledPlugins` 中加入（保留已有条目，不要整份覆盖）：
 
 ```json
 {

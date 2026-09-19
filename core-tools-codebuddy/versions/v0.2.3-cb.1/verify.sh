@@ -12,7 +12,7 @@
 
 set -uo pipefail
 
-EXPECT_PKG="10b4ab24ed67f3b34424eaa8ab313bab"   # 本产物 plugin/ 包指纹
+EXPECT_PKG="2a25c41b8b418c0e1b1967053412d66e"   # 本产物 plugin/ 包指纹
 EXPECT_UPSTREAM_PKG="808192241ec2c53ced9bd83227279279" # 上游 core-tools 包指纹
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PLUGIN="$HERE/plugin"
@@ -83,10 +83,10 @@ else
   done < <( cd "$PLUGIN" && find . -type f | sed 's|^\./||' | LC_ALL=C sort )
 
   printf '  逐字节一致=%s  已改写=%s  新增=%s\n' "$same" "$mod" "$new"
-  if [ "$same" = "13" ] && [ "$mod" = "12" ] && [ "$new" = "4" ]; then
-    ok "改造幅度与 PROVENANCE.md 记录一致（13 / 12 / 4）"
+  if [ "$same" = "12" ] && [ "$mod" = "14" ] && [ "$new" = "4" ]; then
+    ok "改造幅度与 PROVENANCE.md 记录一致（12 / 14 / 4）"
   else
-    bad "改造幅度与记录不符（期望 13 / 12 / 4）"
+    bad "改造幅度与记录不符（期望 12 / 14 / 4）"
   fi
 
   missing=""
@@ -94,8 +94,8 @@ else
     rel="${rel#./}"
     [ -f "$PLUGIN/$rel" ] || missing="$missing $rel"
   done < <( cd "$UPSTREAM" && find . -type f ! -name PROVENANCE.md | LC_ALL=C sort )
-  if [ "$missing" = " README.md" ]; then
-    ok "未移植项符合记录（仅 README.md，由本仓 README 取代）"
+  if [ -z "$missing" ]; then
+    ok "无未移植项（上游 26 文件全部有对应）"
   else
     bad "未移植项与记录不符：$missing"
   fi

@@ -287,22 +287,25 @@ Skip to Phase 3 with a brief note: "Auto-approving team plan (skill-invoked mode
    - Description: "Deep analysis of [analysis context]"
 
 2. **Spawn teammates:**
-   Use the Task tool with the `team_name` parameter to spawn teammates based on the approved plan:
+   Use the Task tool to spawn teammates based on the approved plan. Each teammate needs **both** a
+   `name` (so it can be addressed later via `SendMessage`) and the `team_name` to join:
 
-   - **N explorers** (one per focus area) — `subagent_type: "code-explorer"`, model: sonnet
-     - Named: `explorer-1`, `explorer-2`, ... `explorer-N`
+   - **N explorers** (one per focus area) — `subagent_type: "code-explorer"`, `name: "explorer-{N}"`, `team_name: "deep-analysis-{timestamp}"`, model: sonnet
+     - One per focus area: `explorer-1`, `explorer-2`, ... `explorer-N`
      - Prompt each with: "You are part of a deep analysis team. Wait for your task assignment. The codebase is at: [PATH]. Analysis context: [context]"
 
-   - **1 synthesizer** — `subagent_type: "code-synthesizer"`
-     - Named: `synthesizer`
+   - **1 synthesizer** — `subagent_type: "code-synthesizer"`, `name: "synthesizer"`, `team_name: "deep-analysis-{timestamp}"`
      - Prompt with: "You are the synthesizer for a deep analysis team. You have Bash access for git history, dependency analysis, and static analysis. Wait for your task assignment. The codebase is at: [PATH]. Analysis context: [context]"
+
+   > Pass `name` explicitly for every teammate — the `SendMessage(recipient: "explorer-2")` calls in
+   > Phase 3/5/6 and the shutdown requests in Phase 6 address members by that name.
 
 3. **Create tasks:**
    Use `TaskCreate` for each task based on the approved plan's focus areas:
 
    - **Exploration Task per focus area:** Subject: "Explore: [Focus area label]", Description: detailed exploration instructions including directories, starting files, search terms, and complexity estimate
    - **Synthesis Task:** Subject: "Synthesize and evaluate exploration findings", Description: "Merge and synthesize findings from all exploration tasks into a unified analysis. Investigate gaps using Bash (git history, dependency trees). Evaluate completeness before finalizing."
-     - Use `TaskUpdate` to set `addBlockedBy` pointing to all exploration task IDs
+     - Use `TaskUpdate` to set `addBlockedBy` pointing to all exploration task IDs (if this runtime names the field differently, use its equivalent dependency field — the intent is "synthesis waits for every explorer")
 
 4. **Assign exploration tasks (with status guard):**
 
@@ -516,4 +519,5 @@ When resuming from an interrupted session (detected in Phase 0 Step 2), use the 
 When calling Task tool for teammates:
 - Use `model: "opus"` for the synthesizer
 - Use `model: "sonnet"` for workers
-- Always include `team_name` parameter to join the team
+- Always include `team_name` to join the team, and `name` to make the teammate addressable
+- Reference plugin-defined agents by **bare name** (`subagent_type: "code-explorer"`), never with a plugin prefix

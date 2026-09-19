@@ -19,17 +19,13 @@
 >
 > **2026-09-19 外部依赖整包入库**：`codebase-analysis` 非自足包，其依赖的上游插件 `agent-alchemy-core-tools` **v0.2.3**（26 文件）同期原样入库，与上游 `claude/core-tools/` 逐文件 blob SHA 校验一致。
 >
-> **2026-09-19 外部资产区收口（二次定稿）**：`external-skills/` 最终定型为 `skills/`（本机安装的独立 skill，叶）＋ [`agent-alchemy-marketplace/`](external-skills/agent-alchemy-marketplace/)（上游市场整包镜像，容器）。**三处调整**：① `codebase-analysis` 从 `skills/` 移出——它只是插件内的一个 skill，上游原件在镜像内，重复留档无意义，且已确认后续不使用；② 早期独立归档 `agent-alchemy-core-tools/` 并入镜像 `core-tools/`；③ 撤销 `CATALOG.md`（索引职责归 `external-skills/README.md`，避免两处口径漂移）。镜像扩为 **6 插件 ＋ 1 VS Code 扩展 ＋ 市场注册表**（其中扩展与 `plugin-tools` 于同日排除，见下两条），并补齐两处**真实断链**：`claude-tools`（`sdd-tools` 27 处跨插件引用）与 `.claude-plugin/marketplace.json`（`plugin-tools` 5 处引用）。
->
-> **2026-09-19 排除 VS Code 扩展**：镜像内 `extensions/`（唯一子目录 `vscode/`，20 文件，即 `claude-code-schemas` v0.1.1）整体移除——它既非 skill 也非插件，不在「插件与 skill 基准」范围内。镜像规模随之变为 **145 文件（上游原样 143）**。其中 7 个 JSON Schema（Claude 插件格式的权威字段清单）**未收录但可随时取回**：上游 `fc1a336b` 一份 zip 即可，命令见 [`external-skills/README.md`](external-skills/README.md) 第七节 A；排除前指纹 `270378ae664cf8ccf47992f73a956972` 已留档，用于判断取回件是否同版本。
->
-> **2026-09-19 排除 plugin-tools**：插件移植工具链 `plugin-tools`（0.2.6，20 文件 / 11,770 行）整体移除。它是**叶子包**——其余 5 个包对它**零引用**（已实测），删除不断任何依赖链。镜像规模变为 **125 文件（上游原样 123）**，external-skills 全仓 132 文件。市场注册表 `.claude-plugin/marketplace.json` **保留**：它是市场权威清单（9 插件 + 版本），是版本对照表的可核验来源，且仅 1 文件；其原消费者 `plugin-tools` 已排除，理由见 `external-skills/README.md` 第六节。
+> **2026-09-19 外部资产区收口（二次定稿）**：`external-skills/` 最终定型为 `skills/`（本机安装的独立 skill，叶）＋ [`agent-alchemy-marketplace/`](external-skills/agent-alchemy-marketplace/)（上游市场整包镜像，容器）。**三处调整**：① `codebase-analysis` 从 `skills/` 移出——它只是插件内的一个 skill，上游原件在镜像内，重复留档无意义，且已确认后续不使用；② 早期独立归档 `agent-alchemy-core-tools/` 并入镜像 `core-tools/`；③ 撤销 `CATALOG.md`（索引职责归 `external-skills/README.md`，避免两处口径漂移）。镜像定为 **5 插件 ＋ 市场注册表**，并补齐一处**真实断链**：`claude-tools`（`sdd-tools` 27 处跨插件引用）。
 >
 > **2026-09-19 基线可复算化**：外部区指纹口径统一为 `find . -type f ! -name PROVENANCE.md | LC_ALL=C sort | xargs md5sum | md5sum`，并**作废全部历史指纹值**——旧值既受 `sort` 的 locale 影响（换环境不可复现），又有一个「把自身 md5 写进自身」的自引用失效值。同日重下上游 `main` 全量 `diff -rq`：**当时收录的 6 插件 + 注册表零差异**，`core-tools` 26 个上游文件 `md5sum -c` 26/26 通过，上游 HEAD 仍为 `fc1a336b`（2026-05-31，未更新）。
 >
 > **v0.6.0 post-freeze 修复**（2 项，均已实测）：`SKILL.md` 的 `description: >-` → `|-`（原写法令官方校验器七版全 fail，改后 `Skill is valid!`）；`tests/test_skill_integrity.py` 增加基线目录存在性/非空守卫（原版传错路径会假通过）。因此 `versions/v0.6.0/skill/` 与其 `source.zip` 不再逐字节一致，记录见该版 `README.md` 备注与 `skill/CHANGELOG.md`。
 >
-> **2026-09-19 CodeBuddy 移植落库**：新增顶层 [`core-tools-codebuddy/`](core-tools-codebuddy/)，把 `external-skills` 镜像里的上游 `core-tools`（v0.2.3）移植为 CodeBuddy 插件，**按版本聚合**（首版 `v0.2.3-cb.1` 冻结为校准基准）。关键判定：实测 CodeBuddy 生态具备完整团队原语（`TeamCreate`/`TaskCreate`/`SendMessage`/`AskUserQuestion`）与同格式的 hook 输出（`hookSpecificOutput.permissionDecision`），故 `deep-analysis` 的 6 阶段协调层**未降级**（不采用 `plugin-tools` 的 opencode 适配器做法——那个平台无团队原语，照抄会主动降级）；改动收敛在路径变量与 frontmatter 层，实测 **13 文件逐字节一致 / 12 改写 / 4 新增 / 1 未移植**。基准配 `PROVENANCE.md`（逐文件 md5 + 可复算包指纹 `10b4ab24ed67f3b34424eaa8ab313bab`）与 `verify.sh` 一键校准（已实测通过），上游→CodeBuddy 转换规则与同步清单见其 `docs/CONVERSION.md`。
+> **2026-09-19 CodeBuddy 移植落库**：新增顶层 [`core-tools-codebuddy/`](core-tools-codebuddy/)，把 `external-skills` 镜像里的上游 `core-tools`（v0.2.3）移植为 CodeBuddy 插件，**按版本聚合**（首版 `v0.2.3-cb.1` 冻结为校准基准）。关键判定：实测 CodeBuddy 生态具备完整团队原语（`TeamCreate`/`TaskCreate`/`SendMessage`/`AskUserQuestion`）与同格式的 hook 输出（`hookSpecificOutput.permissionDecision`），故 `deep-analysis` 的 6 阶段协调层**未降级**（未照抄"原语缺失平台"的适配器做法——那会主动降级）；改动收敛在路径变量与 frontmatter 层，实测 **12 文件逐字节一致 / 14 改写 / 4 新增 / 0 未移植**。插件包内含**使用手册**（`plugin/README.md`）。基准配 `PROVENANCE.md`（逐文件 md5 + 可复算包指纹 `2a25c41b8b418c0e1b1967053412d66e`）与 `verify.sh` 一键校准（已实测通过），上游→CodeBuddy 转换规则与同步清单见其 `docs/CONVERSION.md`。
 
 ## 目录约定
 

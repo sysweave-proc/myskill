@@ -5,7 +5,7 @@
 | 版本 | `0.2.3-cb.1` |
 | 上游 | `agent-alchemy-core-tools` **0.2.3**，commit `fc1a336b`（2026-05-31） |
 | 基线日期 | 2026-09-19 |
-| 包指纹 | `10b4ab24ed67f3b34424eaa8ab313bab` |
+| 包指纹 | `2a25c41b8b418c0e1b1967053412d66e` |
 | 上一版 | **无**（本仓首个 CodeBuddy 移植版） |
 | 状态 | **冻结基准** —— 用于日后校准，不再原地修改 |
 
@@ -29,6 +29,7 @@ v0.2.3-cb.1/
 ├── verify.sh          ← 一键校准：本体 / 存档 / 上游基线 / 改造幅度
 └── plugin/            ← 交付产物（CodeBuddy 插件本体，可直接安装）
     ├── .codebuddy-plugin/plugin.json
+    ├── README.md      ← **使用手册**（随插件一起安装）
     ├── commands/      ← 3 个斜杠命令（/deep-analysis、/codebase-analysis、/interview-me）
     ├── skills/        ← 6 个 skill（deep-analysis、codebase-analysis、interview-me、language-patterns、project-conventions、technical-diagrams）
     ├── agents/        ← 4 个 agent（code-explorer、code-synthesizer、code-architect、interview-researcher）
@@ -46,7 +47,7 @@ v0.2.3-cb.1/
 | 斜杠入口 | 上游靠 `user-invocable` skill，CodeBuddy 靠 `commands/` → 新增 3 个命令 |
 | 可选依赖 | Context7 MCP 工具名不再写死，改为可选 + `WebSearch`/`WebFetch` 兜底 |
 
-**改动幅度（实测）**：13 个文件逐字节一致 ｜ 12 个改写 ｜ 4 个新增 ｜ 上游 `README.md` 未移植（由本仓 README 取代）。
+**改动幅度（实测）**：12 个文件逐字节一致 ｜ 14 个改写 ｜ 4 个新增 ｜ **0 未移植**（上游 26 文件全部有对应，含上游 `README.md` → 本产物的使用手册）。
 
 ## 四、校准
 
@@ -55,7 +56,7 @@ bash verify.sh
 ```
 
 校验项：① `plugin/` 本体指纹未被改动；② `source.zip` 解包后与本体一致；
-③ 上游基线指纹仍为 `808192241ec2c53ced9bd83227279279`，且改造幅度仍为 13 / 12 / 4。
+③ 上游基线指纹仍为 `808192241ec2c53ced9bd83227279279`，且改造幅度仍为 12 / 14 / 4。
 
 任何对 `plugin/` 的修改都会使校准失败 —— 这是**预期行为**：改产物需新建版本目录（如 `v0.2.3-cb.2`），
 或在确认是有意变更后同步更新 `PROVENANCE.md` 与本节指纹。
@@ -65,3 +66,19 @@ bash verify.sh
 1. **hook 依赖 `jq`**。未安装时脚本静默 `exit 0`（无意见），退化为 CodeBuddy 正常审批流，不会阻断执行。
 2. **Context7 MCP 可选**，仅 `interview-me` 的主动研究使用；缺失时自动退回 Web/搜索。
 3. **`${CODEBUDDY_PLUGIN_ROOT}` 兜底**：若运行时不展开该变量，`skills/` 与 `agents/` 内已写明用 Glob 定位或按 skill 本地 `references/` 相对路径读取。
+
+## 六、修订记录（重新冻结）
+
+本版在 2026-09-19 首次冻结后共做过 **2 次修订**，均**就地重新冻结**（未另立 `v0.2.3-cb.2`）：
+
+- **修订 1**：核查 CodeBuddy 生态的**真实调用签名**时发现两处保真缺陷 —— ① agent 引用误用带插件前缀写法（4 处）；② 派队友未显式传 `name`，`SendMessage` 将无法寻址到队友。
+- **修订 2**：新增**使用手册** `README.md`（同路径替换上游那份说明），组件本体零改动。
+
+**修订史**（哈希为便于阅读做了截断，旧值不可再复现）：
+
+| 修订 | 包指纹（前 → 后） | `source.zip`（前 → 后） | 改造幅度（前 → 后） |
+|---|---|---|---|
+| 1 | `10b4ab24…3bab` → `e69d8497…4b1c` | `a0b9fd29…f0ca` → `664c172a…e0f6` | 13 逐字节一致/12 改写/4 新增 → 12/13/4 |
+| 2 | `e69d8497…4b1c` → `2a25c41b…d66e` | `664c172a…e0f6` → `cff8f4e0…c3ad` | 12/13/4 → **12 逐字节一致/14 改写/4 新增** |
+
+完整缺陷表、证据与**残留不确定点**见 [`PROVENANCE.md`](PROVENANCE.md) 第七节；对应的转换规则已沉淀到 [`../../docs/CONVERSION.md`](../../docs/CONVERSION.md) 的通用映射表（「插件内 agent 引用」「团队派活调用」两行）。

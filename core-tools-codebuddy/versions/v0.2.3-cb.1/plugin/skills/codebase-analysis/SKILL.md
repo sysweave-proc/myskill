@@ -215,8 +215,8 @@ For each item:
 
 2. **Plan the fix:**
    - Simple: Read the target file, propose changes directly
-   - Complex (architectural): Launch `agent-alchemy-core-tools:code-architect` agent with context: the item title, severity, description, the relevant report section text (copy the specific Challenges/Recommendations entry), and any files or components mentioned. The agent designs the fix and returns a proposal.
-   - Complex (needs investigation): Launch `agent-alchemy-core-tools:code-explorer` agent with context: the item title, description, suspected files/components, and what needs investigation. The agent explores and returns findings for you to formulate a fix proposal.
+   - Complex (architectural): Launch `code-architect` agent with context: the item title, severity, description, the relevant report section text (copy the specific Challenges/Recommendations entry), and any files or components mentioned. The agent designs the fix and returns a proposal.
+   - Complex (needs investigation): Launch `code-explorer` agent with context: the item title, description, suspected files/components, and what needs investigation. The agent explores and returns findings for you to formulate a fix proposal.
    - If an agent launch fails, fall back to direct investigation using Read/Glob/Grep and propose a simpler fix based on available information.
 
 3. **Present proposal:** Show files to modify, specific changes, and rationale

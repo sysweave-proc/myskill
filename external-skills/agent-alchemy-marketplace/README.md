@@ -15,7 +15,7 @@
 
 作者的设计哲学是 **markdown-as-code**（"prompts as software"）—— 所有 agent 行为、工作流、领域知识**全部由 Markdown + YAML frontmatter 定义，没有编译步骤**。Markdown 文件本身就是可执行代码，由 Claude Code 运行时直接解释。
 
-**三个互相咬合的系统：**
+**两个互相咬合的系统：**
 
 ```
 插件框架 (claude/)                   任务看板 (apps/task-manager/)
@@ -25,9 +25,6 @@
          │                                      ▲
          │  生成 task JSON 文件                  │  监听文件系统
          └──────────────────────────────────────┘
-
-VS Code 扩展 (extensions/vscode/)   ← 本镜像未收录
-  Ajv YAML frontmatter 校验 / 7 个 JSON Schema / 自动补全 + 悬浮文档
 ```
 
 ---
@@ -49,13 +46,13 @@ VS Code 扩展 (extensions/vscode/)   ← 本镜像未收录
 
 - 为什么偏好 **"prompts as software"** 而非写代码 —— 数据/ML 工程师习惯把配置和管线当代码管理
 - 为什么流程设计如此**强调可验证性**（验收标准、质量闸门、验证模式）—— MLOps 的核心就是"实验可复现"
-- 为什么做了 **Task Manager 看板 + VS Code 扩展** —— 生产化思维，而不只是 prompt 收藏
+- 为什么做了 **Task Manager 看板** —— 生产化思维，而不只是 prompt 收藏
 
 **其他公开项目**（从 pinned repos 看，他关注的是 agent 基础设施而非业务）：
 
 | 项目 | 说明 | Star |
 |---|---|---|
-| **agent-alchemy** | 本目录对应项目，插件套件 + 看板 + VS Code 扩展 | **44** ⭐ / 7 fork |
+| **agent-alchemy** | 本目录对应项目，插件套件 + 看板 | **44** ⭐ / 7 fork |
 | **agent-tools** | 纯 markdown/JSON 的 skill 与 agent 库，26 skills / 12 agents / 零编译代码 | 2 |
 | **mamba-agents** | 基于 `pydantic-ai` 的 AI Agent 框架（薄封装 + 生产级基础设施） | 2 |
 | **mamba-mcp** | MCP 服务器测试调试工具箱（TUI + CLI + Python API） | 2 |
@@ -99,19 +96,15 @@ cd "$HOME" && curl -sSL -o aa.zip "https://codeload.github.com/sequenzia/agent-a
 python -c "import zipfile; zipfile.ZipFile('aa.zip').extractall('aa_new')"
 diff -rq aa_new/agent-alchemy-main/claude/core-tools "X:/myskill/external-skills/agent-alchemy-marketplace/core-tools"
 
-# 4. 校验本地镜像是否被改动（各处指纹见第八节，务必带 LC_ALL=C）
+# 4. 校验本地镜像是否被改动（各处指纹见第七节，务必带 LC_ALL=C）
 cd /home/zhq/mydisk/myskill/external-skills/agent-alchemy-marketplace/sdd-tools \
   && find . -type f ! -name PROVENANCE.md | LC_ALL=C sort | xargs md5sum | md5sum | cut -c1-32
 
-# 5. 只跟踪 schema 变化（改造对照表，最该盯的部分）
-#    https://github.com/sequenzia/agent-alchemy/commits/main/extensions/vscode/schemas
-#    注：本镜像未收录 extensions/，此项仅在需要取回 schema 时使用（见第六节）
 ```
 
-**归档范围**：**5 个插件 + 市场注册表**（共 125 文件，其中上游原样文件 123）。未归档的有 `plugin-tools`、`opencode-tools`、`cs-tools`、`git-tools` 四个插件（用途见第四节），以及**整棵 `extensions/`**——其唯一子目录 `vscode/`（20 文件）已于 2026-09-19 按用户要求排除，说明与恢复方式见第六节。
+**归档范围**：**5 个插件 + 市场注册表**（共 125 文件，其中上游原样文件 123）。未归档的有 `opencode-tools`、`cs-tools`、`git-tools` 三个插件（用途见第四节）。
 
-> 2026-09-19 补齐：`claude-tools`（`sdd-tools` 的 27 处跨插件引用原为断链）与 `.claude-plugin/marketplace.json`（`plugin-tools` 的 5 处引用）。
-> 2026-09-19 排除：`plugin-tools`（叶子包，其余 5 个包对它零引用，删除不断任何链）。注册表**保留**，理由见第八节注。
+> 2026-09-19 补齐：`claude-tools`（`sdd-tools` 的 27 处跨插件引用原为断链）。
 
 **版本对照表**（截至 `fc1a336b`，来自 marketplace.json）：
 
@@ -123,21 +116,19 @@ cd /home/zhq/mydisk/myskill/external-skills/agent-alchemy-marketplace/sdd-tools 
 | `agent-alchemy-git-tools` | 0.1.0 |
 | `agent-alchemy-sdd-tools` | 0.2.11 |
 | `agent-alchemy-tdd-tools` | 0.2.1 |
-| `agent-alchemy-plugin-tools` | 0.2.6 |
 | `agent-alchemy-opencode-tools` | 0.1.3 |
 | `agent-alchemy-cs-tools` | 0.1.0 |
 
 ---
 
-## 四、9 个插件全览
+## 四、插件全览
 
-市场共 **9 个插件**。本目录归档了 **5 个**（★ 标记），其余 4 个未归档但列出用途备查。
+本目录归档 **5 个**（★ 标记）；其余未归档的插件也一并列出用途备查。
 
 | 插件 | 版本 | 文件 | md 行数 | 用途 | 场景 |
 |---|---|---|---|---|---|
 | ★ `core-tools` | 0.2.3 | 26 (+PROVENANCE) | 5,774 | 代码库分析、多智能体深度探索、语言模式 | **读懂**一个陌生/已有代码库 |
 | ★ `sdd-tools` | 0.2.11 | 41 | 12,716 | 规格驱动开发全流水线 | **规划并建造**新功能 |
-| `plugin-tools` | 0.2.6 | 20 | 11,770 | 插件移植、适配器校验、生态健康 | 把 Claude 插件搬到别的平台（**2026-09-19 排除**，见第五节） |
 | ★ `tdd-tools` | 0.2.1 | 21 | 8,961 | 测试驱动开发（RED-GREEN-REFACTOR） | **用测试驱动实现**，保证质量 |
 | ★ `dev-tools` | 0.3.4 | 25 | 5,699 | 功能开发、代码评审、架构模式、文档、changelog | **日常开发流程**辅助 |
 | ★ `claude-tools` | 0.2.5 | 9 | 3,033 | Claude Tasks 与 Agent Teams 的参考手册 | 理解 Claude 原生任务/团队机制；**已归档**（sdd-tools 硬依赖） |
@@ -219,36 +210,7 @@ SDD 把中间产物显式化：
 
 ---
 
-### 3. `plugin-tools` —— 插件移植工具链（**本镜像未收录**）
-
-> ⚠️ **本镜像不含此包**：2026-09-19 按用户要求排除。它是**叶子包** —— 其余 5 个包对它零引用（已实测），删除不断任何依赖链。
-> **未收录 ≠ 不可得**：上游 `fc1a336b` 一份 zip 取 `claude/plugin-tools/` 即可；排除前指纹 `237382f5562b8482eb55bdd188ebdad9`（20 文件 / 11,770 行）用于判断日后取回件是否同版本。
-> **本节内容保留**，因为它是全市场**唯一一份把「跨平台移植」系统化的资料**：适配器格式规范、不兼容项解法、依赖闭包检查，外加一个**已完成的 OpenCode 适配器范例**。
-
-**定位**：把 Claude 插件/AI 资产移植到另一个平台。**它的工作就是你要做的工作。**
-
-**组成**
-- **5 个 skill**：`port-plugin`(**2619**，全市场最大单文件)、`port-master`(1027)、`update-ported-plugin`(791)、`dependency-checker`(650)、`validate-adapter`(623)、`bump-plugin-version`(525)
-- **2 个 agent**：`port-converter`(417，专职转换)、`researcher`(232)
-- **7 份转换规则参考**：`adapter-format.md`(679，**适配器格式规范**)、`mcp-converter.md`(713)、`incompatibility-resolver.md`(606)、`agent-converter.md`(595)、`hook-converter.md`(569)、`reference-converter.md`(395)
-- **1 个已完成适配器实例**：`references/adapters/opencode.md`(271)
-
-**为什么这份对你价值最高**：它的设计初衷就是"处理跨平台移植"，已内置一个 **OpenCode 平台适配器作为范例**，并系统化了：
-- 适配器该长什么样（`adapter-format.md`）
-- 不兼容项怎么解（`incompatibility-resolver.md`）
-- 依赖闭包怎么查（`dependency-checker` —— 就是我手工给你做的那件事的成品版）
-- 各类组件（agent / hook / mcp / reference）分别怎么转
-
-**你的改造路径**：照 `references/adapters/opencode.md` 的格式，**写一份 `workbuddy.md`**。
-
-**适用场景**
-- 把 Claude 生态资产搬到其他 agent 平台
-- 检查插件依赖完整性
-- 维护已移植版本（上游更新后同步）
-
----
-
-### ★ 4. `tdd-tools` —— 测试驱动开发（已归档）
+### ★ 3. `tdd-tools` —— 测试驱动开发（已归档）
 
 **定位**：用 RED-GREEN-REFACTOR 循环驱动实现，保证质量。
 
@@ -265,7 +227,7 @@ SDD 把中间产物显式化：
 
 ---
 
-### ★ 5. `dev-tools` —— 日常开发流程（已归档）
+### ★ 4. `dev-tools` —— 日常开发流程（已归档）
 
 **定位**：功能开发、评审、架构、文档、changelog 的日常辅助。
 
@@ -282,7 +244,7 @@ SDD 把中间产物显式化：
 
 ---
 
-### 6. `claude-tools` —— Claude 原语参考手册（**已归档**，2026-09-19 补齐）
+### 5. `claude-tools` —— Claude 原语参考手册（**已归档**，2026-09-19 补齐）
 
 3033 行，9 个文件。内容是 **Claude Tasks 与 Agent Teams 功能的参考文档**（含 `references/orchestration-patterns.md`）。
 
@@ -296,7 +258,7 @@ SDD 把中间产物显式化：
 
 ---
 
-### 7. `opencode-tools` —— OpenCode 扩展生成（未归档）
+### 6. `opencode-tools` —— OpenCode 扩展生成（未归档）
 
 3660 行，18 个文件。7 个 skill（`oc-tool-dev` 统一入口 + create/update × skill/agent/command 各一对）+ 3 个 agent（`oc-researcher` 抓最新文档验证兼容、`oc-validator` 校验、`oc-generator` 生成）+ 4 份参考（`platform-overview.md` 436 行含平台差异表）。
 
@@ -321,7 +283,7 @@ SDD 把中间产物显式化：
 
 ---
 
-### 8. `cs-tools` —— 竞赛编程（未归档）
+### 7. `cs-tools` —— 竞赛编程（未归档）
 
 3471 行，11 个文件。2 个 agent（`problem-solver`、`solution-verifier`）+ 7 个 skill：`data-structures`(450)、`dp-patterns`(428)、`graph-algorithms`(478)、`math-and-combinatorics`(492)、`search-and-optimization`(493)、`string-algorithms`(450)、`solve`(164)、`verify`(136)。
 
@@ -329,7 +291,7 @@ SDD 把中间产物显式化：
 
 ---
 
-### 9. `git-tools` —— Git 自动化（未归档）
+### 8. `git-tools` —— Git 自动化（未归档）
 
 仅 2 个文件 / 159 行。Conventional Commits 自动化。**几乎是空壳**，是 9 个里最轻的。
 
@@ -337,74 +299,7 @@ SDD 把中间产物显式化：
 
 ---
 
-## 六、周边工具：VS Code 扩展（格式 Schema）——**本镜像未收录**
-
-> ⚠️ **本镜像不含此扩展。** `extensions/`（唯一子目录 `vscode/`，20 文件）已于 2026-09-19 按用户要求整体排除 —— 它既不是 skill 也不是插件，不在「插件与 skill 基准」范围内。
-> **未收录 ≠ 不可得**：上游 `fc1a336b` 一份 zip 即可取回，命令见顶层 [`../README.md`](../README.md) 第七节 A。
-> **本节内容仍然保留**，因为那 **7 个 JSON Schema 是 Claude 插件格式的权威字段清单**，是改造时的格式对照表。以下描述全部基于**上游** `extensions/vscode/`，不是本地文件。
-
-**位置（上游）**：`extensions/vscode/` ｜ 20 文件 ｜ 名称 `claude-code-schemas` v0.1.1 ｜ MIT
-**排除前的本地指纹**：`270378ae664cf8ccf47992f73a956972`（如需比对取回件是否同版本，用此值）
-
-### 它是什么
-
-**Claude Code 插件格式的"语法检查器"。** 在 VS Code 里写 Claude 插件文件时，实时提示字段错误、自动补全、显示字段文档。
-
-- **JSON 配置校验（声明式，零运行时代码）**：`plugin.json` / `hooks.json` / `.mcp.json` / `.lsp.json` / `marketplace.json`
-- **YAML frontmatter 校验（编程式）**：`SKILL.md` 与 agent 文件
-- 代码量 653 行 TypeScript（6 个源文件）—— **价值全在 7 个 schema 里**
-- ⚠️ **没有预打包产物**：仓库内既无 `.vsix` 也无 `dist/`，要装必须先 `npm install && npm run build && npm run package`。但改造用途下**只需要 `schemas/` 里那 7 个 JSON 文件**，装不装扩展无所谓
-
-### 7 个 JSON Schema（896 行，**本镜像未收录但最值得取回的部分**）
-
-| 文件 | 行数 | 管什么 |
-|---|---|---|
-| `plugin.schema.json` | 167 | 插件清单 `plugin.json` |
-| `marketplace.schema.json` | 232 | 市场注册表 `marketplace.json` |
-| `skill-frontmatter.schema.json` | 124 | `SKILL.md` 的 YAML frontmatter |
-| `agent-frontmatter.schema.json` | 109 | agent 文件的 YAML frontmatter |
-| `hooks.schema.json` | 111 | hook 配置 `hooks.json` |
-| `mcp.schema.json` | 76 | MCP 服务器 `.mcp.json` |
-| `lsp.schema.json` | 77 | LSP 服务器 `.lsp.json` |
-
-### 关键字段速查（改造对照用）
-
-**`skill-frontmatter`**：`name` / `description` / `argument-hint` / `disable-model-invocation` / `user-invocable` / **`allowed-tools`（可为逗号分隔字符串**或**数组**两种形态！）/ `model` / `context`（枚举仅 `fork`）/ `agent` / `hooks` / `arguments`
-
-**`agent-frontmatter`**：`name` / `description` / `tools` / `disallowedTools` / **`model`（枚举 `sonnet`/`opus`/`haiku`/`inherit`，默认 `inherit`）** / **`permissionMode`（枚举 `default`/`acceptEdits`/`delegate`/`dontAsk`/`bypassPermissions`/`plan`）** / `maxTurns` / `skills`（预加载的 skill 列表）/ `hooks` / **`memory`（枚举 `user`/`project`/`local`）** / `mcpServers`
-
-**`plugin`** 清单字段：`name`(必填) / `version` / `description` / `author` / `homepage` / `repository` / `license` / `keywords` / `commands` / `agents` / `skills` / `hooks` / `mcpServers` / `outputStyles` / `lspServers`
-
-**hook 事件全集（14 个）**：`PreToolUse`、`PostToolUse`、`PostToolUseFailure`、`Stop`、`SubagentStop`、`SubagentStart`、`SessionStart`、`SessionEnd`、`UserPromptSubmit`、`PreCompact`、`Notification`、`PermissionRequest`、**`TeammateIdle`**、**`TaskCompleted`**
-
-> 加粗的这几项（`TeammateIdle`、`TaskCompleted`、model 枚举、`permissionMode` 的 `delegate`）是**明确暴露 Claude 专有能力的字段** —— 改造 WorkBuddy 时，这些就是必须重新设计的点。
-
-### 对改造工作的价值
-
-1. **它是 Claude 插件格式的权威字段清单**（作者逐字段对照官方文档核对过，见 2026-02-07 的 commit）
-2. **可作 WorkBuddy 版 schema 的编写起点** —— 照抄方法论：把"合法格式"沉淀成机器可校验的 JSON Schema，用校验替代人工 review
-3. **长期同步的自动化基础** —— 上游更新后，跑一遍 schema 校验就能定位需要改造的字段，不必重新通读全部文件
-
-### 使用限制
-
-- Schema 最后更新 `2026-02-15`，**比插件主体（`2026-05-31`）旧约 3.5 个月**，可能未覆盖插件新加字段
-- 该扩展校验的是 **Claude 格式**，不能直接用于 WorkBuddy 格式文件，**必须改写后才能用在改造产物上**
-- 扩展本身能否在 VS Code 正常运行对改造无影响 —— **要的是 `schemas/` 里那 7 个 JSON 文件**
-
-**校验范围的判定条件（读 `src/frontmatter/utils.ts` 得出，容易误解）**：它不是"在 `.claude/` 下才校验"，而是——
-
-| 类型 | 条件 |
-|---|---|
-| skill | 文件名 `SKILL.md` **且**路径里含 `skills` 目录段 |
-| agent | 任意 `.md`（非 `SKILL.md`）**且**路径里含 `agents` 目录段 |
-
-后果：`external-skills/skills/*` 与 `agent-alchemy-marketplace/*/skills/*`（本镜像共 31 个 `SKILL.md`）**会**被校验；而本仓自建 skill 用的是**单数 `skill/`** 目录（`repo-wiki-authoring/skill/`、`source-code-reading-skill/**/skill/`），**不会**被校验。JSON 部分只匹配 Claude 专有路径（`**/.claude-plugin/plugin.json` 等 5 条 `fileMatch`）。
-
-schema 为 `additionalProperties: false`，因此任何越界字段都会被标红 —— 例如 `skills/codebase-reading/SKILL.md` 的 `metadata` 字段会被报错（这是改造自建 skill 时**有用的 lint**，但对已归档的 A 类副本属误报）。
-
----
-
-## 七、插件之间怎么配合
+## 六、插件之间怎么配合
 
 ```
                     ┌─────────────────────────────────────┐
@@ -425,21 +320,19 @@ schema 为 `additionalProperties: false`，因此任何越界字段都会被标�
    │  tdd-cycle / generate-tests  │   │  bug-killer / docs    │
    └─────────────────────────────┘   └──────────────────────┘
 
-   plugin-tools（横向能力）：把上面任何一个搬到别的平台 —— 本镜像未收录
    claude-tools（底层参考）：所有插件依赖的 Claude 原语文档
    ```
 
    **对你（改造 WorkBuddy 版）的组合建议**：
 
    1. **core-tools** = 目标能力本体（要改造的）
-   2. **plugin-tools** = 改造工具（`adapters/workbuddy.md` 照 `opencode.md` 写）—— **本镜像未收录**，需要时按第六节方式取回 `claude/plugin-tools/`
-   3. **claude-tools** = 差异对照（明确要替换掉哪些原语）
-   4. **opencode-tools** = 策略参考（看作者如何处理同类缺口）
-   5. **sdd-tools / tdd-tools / dev-tools** = 后续扩展储备
+   2. **claude-tools** = 差异对照（明确要替换掉哪些原语）
+   3. **opencode-tools** = 策略参考（看作者如何处理同类缺口）
+   4. **sdd-tools / tdd-tools / dev-tools** = 后续扩展储备
 
 ---
 
-## 八、目录结构与指纹
+## 七、目录结构与指纹
 
 ```
 agent-alchemy-marketplace/                    125 files（上游原样 123）
@@ -452,7 +345,6 @@ agent-alchemy-marketplace/                    125 files（上游原样 123）
 ├── tdd-tools/               21 files /  8,961 md 行   指纹 fcfafcbfd6d2b114663a85675b0648a6
 └── dev-tools/               25 files /  5,699 md 行   指纹 a9c9403919c7a3154afc000922a2f00b
 
-（`plugin-tools/` 与 `extensions/` 未收录，见第五节与第六节）
 ```
 
 **全部文件均从上游原样复制，未做任何修改。**（插件来自 `claude/<插件名>/`，注册表来自 `.claude-plugin/`）
@@ -472,7 +364,7 @@ find . -type f ! -name PROVENANCE.md | LC_ALL=C sort | xargs md5sum | md5sum | c
 
 ---
 
-## 九、本地已有的其他相关材料
+## 八、本地已有的其他相关材料
 
 | 路径 | 说明 |
 |---|---|
@@ -484,19 +376,18 @@ find . -type f ! -name PROVENANCE.md | LC_ALL=C sort | xargs md5sum | md5sum | c
 
 ---
 
-## 十、贡献者提醒：这不是 WorkBuddy 可用的 skill
+## 九、贡献者提醒：这不是 WorkBuddy 可用的 skill
 
 ⚠️ **本目录是"上游原始基线"，不是可直接运行的 WorkBuddy skill。**
 
 已识别的改造障碍（详见 `../README.md`）：
 
-1. **`${CLAUDE_PLUGIN_ROOT}` 路径变量** —— 全镜像实测 **104 处、分布 27 个文件**（排除 `plugin-tools` 前的口径为 251 处 / 43 文件），WorkBuddy 不展开此变量
+1. **`${CLAUDE_PLUGIN_ROOT}` 路径变量** —— 全镜像实测 **104 处、分布 27 个文件**，WorkBuddy 不展开此变量
 2. **Agent Teams 原语** —— `TeamCreate` / `TeamDelete` / `SendMessage` / `Task(model: opus|sonnet)` 在 WorkBuddy 中不存在，需映射为 `Task` 子代理 + 磁盘任务记录。**这套原语的完整语义在 [`claude-tools/`](claude-tools/) 里（3033 行）—— 改造前先读它，才能明确"要替代掉什么"；`sdd-tools` 的 27 处引用也全部指向它**
 3. **目录约定** —— `.claude/sessions/`、`~/.claude/tasks/`、`.claude/agent-alchemy.local.md` 等路径需改为 WorkBuddy 的 `.workbuddy/` 树
 4. **`AskUserQuestion` 在子代理中不可用**（这条在 OpenCode 说明里也出现过，需实测 WorkBuddy 行为）
 5. **Context7 MCP 依赖** —— `interview-me` / `interview-researcher` 用到 `mcp__context7__*`，非 core-tools 分析链上的必需项
 
-**改造时优先参考** —— 以下三者**都在本镜像未收录的 `plugin-tools/` 内**，需按第六节方式取回 `claude/plugin-tools/`：`references/adapters/opencode.md`（适配器范例）+ `references/adapter-format.md`（格式规范）+ `references/incompatibility-resolver.md`（不兼容处理）。
 
 ---
 

@@ -36,6 +36,8 @@ CodeBuddy 生态中以下原语真实存在且语义与 Claude Code 一致：
 | 模型分层 | `model: opus/sonnet` | 不变 | CodeBuddy agent 支持同枚举（`inherit/sonnet/opus/haiku`） |
 | MCP 工具名 | `mcp__context7__*` | 不写死，改为"可选 + WebFetch/WebSearch 兜底" | CodeBuddy 的 MCP 命名带插件前缀（`mcp__plugin_<plugin>_<server>__<tool>`），写死会随环境变化失效 |
 | Hook 事件与输出 | `PreToolUse` + `permissionDecision` | 不变 | 格式兼容，脚本逻辑零改动 |
+| **插件内 agent 引用** | `agent-alchemy-core-tools:code-architect`（Claude 命名空间写法） | **裸名** `code-architect` | 全生态 `subagent_type` 实测取值无一处带插件前缀（`bg-scan`/`python-pro`/`general-purpose`/`fork`…）；官方 `plugin-dev` 文档亦写「Single plugin: `agent-name`」 |
+| **团队派活调用** | `Task` + `team_name`（队友名靠约定） | `Task` + `subagent_type` + **`name`** + `team_name`（`max_turns` 可选） | CodeBuddy 生态建队流程显式传 `name`；`name` 是 `SendMessage(recipient: "explorer-N")` 能寻址到队友的前提 |
 
 ---
 
@@ -43,12 +45,14 @@ CodeBuddy 生态中以下原语真实存在且语义与 Claude Code 一致：
 
 ### 1. `deep-analysis`（协调层，**核心**）
 
-**正文逻辑：零改动** —— 6 阶段、动态焦点区、分级审批、团队装配、状态守卫指派、监控循环、结构完备性检查、综合、缓存与归档、错误降级矩阵、会话恢复策略表全部保留。
+**正文流程逻辑全部保留** —— 6 阶段、动态焦点区、分级审批、团队装配、状态守卫指派、监控循环、结构完备性检查、综合、缓存与归档、错误降级矩阵、会话恢复策略表均未删改。
 
-改动仅 3 处：
-- frontmatter：删除 `argument-hint` / `user-invocable` / `disable-model-invocation`，加 `version: 0.2.3`
+改动共 5 处：
+- frontmatter：删除 `argument-hint` / `user-invocable` / `disable-model-invocation`，加 `version`
 - `.claude/` → `.codebuddy/`（21 处）
 - `CLAUDE.md` → `CODEBUDDY.md`（recon 阶段的文档读取目标）
+- **Phase 3 派队友补显式 `name`** —— 上游只传 `team_name`、队友名靠约定；CodeBuddy 生态的建队流程显式传 `name` + `team_name` + `max_turns`，而 `SendMessage(recipient: "explorer-2")` 要能寻址到队友，`name` 必须显式给出
+- **`TaskUpdate` 依赖字段加等价性括注** —— CodeBuddy 确有「共享任务列表 + 指派 + blocked by」语义，但未找到 `addBlockedBy` 的拼写级证据，故改为「或运行时等价的依赖字段」
 
 ### 2. `codebase-analysis`
 
@@ -56,7 +60,7 @@ CodeBuddy 生态中以下原语真实存在且语义与 Claude Code 一致：
 - `${CLAUDE_PLUGIN_ROOT}` → `${CODEBUDDY_PLUGIN_ROOT}`（4 处）
 - `CLAUDE.md` → `CODEBUDDY.md`（3 处）
 - 新增「Reference loading」段：给出变量未展开时的兜底定位方式
-- 跨插件 agent 引用 `agent-alchemy-core-tools:code-architect` / `code-explorer` **保持原样**（本插件名沿用上游命名空间）
+- **agent 引用去插件前缀**（4 处：本 skill ×2 + `references/actionable-insights-template.md` ×2）—— 上游写 `agent-alchemy-core-tools:code-architect`，但在 CodeBuddy 中全生态 `subagent_type` 实测均为**裸名**，故改为 `code-architect` / `code-explorer`。该参考文件因此由「逐字节一致」变为「已改写」
 
 ### 3. `interview-me`
 

@@ -54,7 +54,6 @@ external-skills/                            132 文件
     ├── sdd-tools/     41
     ├── tdd-tools/     21
     └── dev-tools/     25
-        （`plugin-tools/` 与上游 `extensions/` 未收录，见第五节）
 ```
 
 判别口径（一眼可验）：**根下直接有 `SKILL.md` = 独立 skill；根下是 `agents/` + `hooks/` + `skills/` 三件套 = 插件包。**
@@ -74,13 +73,11 @@ external-skills/                            132 文件
 
 **注意：这两份是从安装位回收的副本，不是上游原样。** 两者 `description` 都追加了中文触发词；`codebase-reading` 另有一个 `metadata.short-description` 字段。二者 frontmatter **都没有 `version`**，所以**无法靠版本号判断新旧，只能靠内容指纹比对**。
 
-> 已知副作用：若安装 `claude-code-schemas` 扩展，该扩展按 Claude schema 校验，`codebase-reading/SKILL.md` 的 `metadata` 字段会被报错（schema 为 `additionalProperties: false`）。`external-skills/skills/` 路径含 `skills` 段，**会**被纳入校验范围。
-
 ---
 
 ## 四、B 类 · 市场镜像（5 插件 ＋ 注册表）
 
-市场共 **9 个插件**，本镜像归档 **5 个**；未归档的 4 个插件与整棵 `extensions/` 见第五节。
+市场共 **9 个插件**，本镜像归档 **5 个**；未归档的 3 个插件见第五节。
 
 | 包 | 文件 | md 行 | 包指纹（32 位） |
 |---|---|---|---|
@@ -108,27 +105,19 @@ sdd-tools ──(read)──> claude-tools        27 处引用，已闭合 ✓
 dev-tools ──(read)──> core-tools           4 处引用，已闭合 ✓
 core-tools ──(read)──> 无包外依赖（唯一外引 Context7 MCP，不在分析链上）
 tdd-tools / claude-tools / .claude-plugin 均无包内依赖
-已排除的 plugin-tools 是叶子 —— 其余 5 个包对它零引用（已实测）✓
 ```
 
 ---
 
-## 五、未收录的部分（4 个插件 ＋ 整个 `extensions/`）
+## 五、未收录的部分（3 个插件）
 
 **插件** —— 市场共 9 个，本镜像归档 5 个：
 
 | 插件 | 版本 | 文件/行数 | 未收录理由 |
 |---|---|---|---|
-| `plugin-tools` | 0.2.6 | 20 / 11,770 | 插件移植工具链（适配器规范 / 不兼容处理 / OpenCode 适配器范例）。**叶子包 —— 其余 5 个包对它零引用**，删除不断任何链；2026-09-19 按用户要求排除。排除前指纹 `237382f5562b8482eb55bdd188ebdad9` |
 | `opencode-tools` | 0.1.3 | 18 / 3,660 | 跨平台移植**范例**（含 Claude↔OpenCode 差异表）。非任何已归档包的依赖，需要时再取 |
 | `cs-tools` | 0.1.0 | 11 / 3,471 | 竞赛编程 / LeetCode，与本仓无关 |
 | `git-tools` | 0.1.0 | 2 / 159 | Conventional Commits，几乎是空壳 |
-
-**`extensions/`（20 文件）** —— 即 VS Code 扩展 `claude-code-schemas` v0.1.1，**已于 2026-09-19 按用户要求整体排除**。理由：它既不是 skill 也不是插件，不属于「插件与 skill 基准」范围。
-
-> ⚠️ 但其中 **7 个 JSON Schema（896 行）是 Claude 插件格式的权威字段清单**，属改造时的格式对照表 —— **未收录 ≠ 不可得**，上游 `fc1a336b` 一份 zip 即可取回。价值说明、字段速查与使用限制见 [镜像 README 第六节](agent-alchemy-marketplace/README.md)；排除前指纹 `270378ae664cf8ccf47992f73a956972` 已留档。
-
-> 补齐方式见第七节 A 命令：插件取 `claude/<插件名>/`，扩展取 `extensions/vscode/`。
 
 ---
 
@@ -139,10 +128,8 @@ tdd-tools / claude-tools / .claude-plugin 均无包内依赖
 | # | 位置 | 偏差 | 说明 |
 |---|---|---|---|
 | 1 | `core-tools/PROVENANCE.md` | **上游无此文件**，本地新增 | 下载流程生成的溯源记录（含逐文件 md5）。因此对 `core-tools/` 做 `diff -rq` 会**稳定地多出这 1 行差异**，属预期，不是污染 |
-| 2 | `.claude-plugin/` | **放置层级与上游差一层** | 上游真实路径是 `<repo>/.claude-plugin/marketplace.json`；本镜像拍平了上游的 `claude/` 这一层，故落在 `agent-alchemy-marketplace/.claude-plugin/`。因此凡引用它时深度**少一级**，按「镜像根」理解即可（原消费者 `plugin-tools` 已排除，此条留给日后取回时参考） |
+| 2 | `.claude-plugin/` | **放置层级与上游差一层** | 上游真实路径是 `<repo>/.claude-plugin/marketplace.json`；本镜像拍平了上游的 `claude/` 这一层，故落在 `agent-alchemy-marketplace/.claude-plugin/`。因此凡引用它时深度**少一级**，按「镜像根」理解即可 |
 | 3 | `skills/codebase-reading`、`skills/deep-read` | **非上游原样** | 从安装位回收，`description` 已追加本地中文触发词；上游未定位，无原件可比 |
-
-> **注册表保留说明**：`.claude-plugin/marketplace.json` 在镜像内的**唯一消费者**（`plugin-tools`）已排除，但它本身**保留** —— 它是市场的权威清单（9 个插件 + 版本号），是第四节指纹表与镜像 README 版本对照表的可核验来源，且只有 1 个文件。属主动保留，不是遗漏。
 
 ### 权限位（mode）也是基线的一部分
 
@@ -187,7 +174,6 @@ for p in core-tools claude-tools sdd-tools tdd-tools dev-tools; do
     /home/zhq/mydisk/myskill/external-skills/agent-alchemy-marketplace/$p
 done
 diff -rq "$U/.claude-plugin" /home/zhq/mydisk/myskill/external-skills/agent-alchemy-marketplace/.claude-plugin
-# 注：extensions/ 未收录，不参与比对；需要时用 diff -rq "$U/extensions/vscode" <取回目录> 单独核
 
 # B. 只看上游有没有动过（最省事）
 curl -sS https://api.github.com/repos/sequenzia/agent-alchemy/commits/main | python3 -c "import sys,json;print(json.load(sys.stdin)['sha'])"
@@ -220,14 +206,11 @@ done
 | 2026-09-19 | 删除 `skills/codebase-analysis/` | 有 → 无 | 它只是插件内的一个 skill，原件已在 core-tools 内，重复归档；**已确认后续不使用**，故不留存安装位适配改法 |
 | 2026-09-19 | 删除 `CATALOG.md` | 有 → 无 | 索引职责并入本文件，避免两处口径漂移 |
 | 2026-09-19 | **补齐 `claude-tools`** | 未收录 → 9 文件 | `sdd-tools` 有 27 处跨插件引用指向它，原为**断链** |
-| 2026-09-19 | **补齐 `.claude-plugin/marketplace.json`** | 未收录 → 1 文件 | `plugin-tools` 5 处引用（版本号 source of truth） |
 | 2026-09-19 | **全量基准复核** | 记录制 → 实测制 | 重下上游 `diff -rq` 零差异；`md5sum -c` 26/26；上游 HEAD 未变 |
 | 2026-09-19 | **指纹口径统一（locale）** | 环境相关 `sort` → **`LC_ALL=C sort`** | 同一目录实测两种排序得出不同指纹，旧值不可复现，全部作废 |
 | 2026-09-19 | **指纹口径统一（自引用）** | 含 `PROVENANCE.md` → 一律排除 | 废弃 `efe0cbba…`，全部按新口径重算 |
 | 2026-09-19 | 本文档重写 | 与目录实际严重不符 → 对齐现状 | 原版引用已删除的 `CATALOG.md`、`agent-alchemy-core-tools/`、`skills/codebase-analysis/` |
 | 2026-09-19 | **权限位校正（mode）** | `100755` × 155 → `100644` × 163 ＋ `100755` × 9 | 与上游 git tree `fc1a336b` 的 `mode` 字段逐文件比对，修正 153 处，复查不一致 0 |
-| 2026-09-19 | **排除 `extensions/`** | 20 文件 → 无 | 按用户要求；它既非 skill 也非插件，不在基准范围。镜像 165 → **145** 文件（上游原样 163 → **143**）；7 个 JSON Schema 的取回方式与排除前指纹（`270378ae…`）已留档 |
-| 2026-09-19 | **排除 `plugin-tools`** | 20 文件 / 11,770 行 → 无 | 按用户要求。实测为**叶子包**（其余 5 包对它零引用），删除不断任何链。镜像 145 → **125** 文件（上游原样 143 → **123**），全仓 132 文件；排除前指纹（`237382f5…`）已留档 |
 
 ---
 
@@ -235,7 +218,7 @@ done
 
 本仓自建的 `repo-wiki-authoring`（宏观地图）与 `source-code-reading-skill` 系列，和 A 类两个 skill **能力域相邻**，同时挂载时模型可能挑错 skill：
 
-- 本仓自建 skill 的目录是**单数 `skill/`**（如 `repo-wiki-authoring/skill/SKILL.md`），A 类是**复数 `skills/`** —— 这一字之差决定了 `claude-code-schemas` 扩展**只校验 A 类、不校验自建 skill**。
+- 本仓自建 skill 的目录是**单数 `skill/`**（如 `repo-wiki-authoring/skill/SKILL.md`），A 类是**复数 `skills/`**。
 - `codebase-reading` 产出「一个代码库 → 一套五件套」（README / code-reading / architecture / api-flow / key-modules）—— 与「一个机制 = 一篇」的笔记库结构不兼容。
 
 > `core-tools` 内的 `codebase-analysis` **仅作为依赖闭包的一部分归档，已确认不使用**，不参与抢触发权衡。
