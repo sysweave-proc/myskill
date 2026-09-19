@@ -26,7 +26,7 @@
          │  生成 task JSON 文件                  │  监听文件系统
          └──────────────────────────────────────┘
 
-VS Code 扩展 (extensions/vscode/)
+VS Code 扩展 (extensions/vscode/)   ← 本镜像未收录
   Ajv YAML frontmatter 校验 / 7 个 JSON Schema / 自动补全 + 悬浮文档
 ```
 
@@ -105,9 +105,10 @@ cd /home/zhq/mydisk/myskill/external-skills/agent-alchemy-marketplace/sdd-tools 
 
 # 5. 只跟踪 schema 变化（改造对照表，最该盯的部分）
 #    https://github.com/sequenzia/agent-alchemy/commits/main/extensions/vscode/schemas
+#    注：本镜像未收录 extensions/，此项仅在需要取回 schema 时使用（见第六节）
 ```
 
-**归档范围**：**6 个插件 + 1 个扩展 + 市场注册表**（共 165 文件，其中上游原样文件 163）。未归档的有 `opencode-tools`、`cs-tools`、`git-tools` 三个插件（用途见第四节）。
+**归档范围**：**6 个插件 + 市场注册表**（共 145 文件，其中上游原样文件 143）。未归档的有 `opencode-tools`、`cs-tools`、`git-tools` 三个插件（用途见第四节），以及**整棵 `extensions/`**——其唯一子目录 `vscode/`（20 文件）已于 2026-09-19 按用户要求排除，说明与恢复方式见第六节。
 
 > 2026-09-19 补齐：`claude-tools`（`sdd-tools` 的 27 处跨插件引用原为断链）与 `.claude-plugin/marketplace.json`（`plugin-tools` 的 5 处引用）。
 
@@ -331,9 +332,14 @@ SDD 把中间产物显式化：
 
 ---
 
-## 六、周边工具：VS Code 扩展（格式 Schema）
+## 六、周边工具：VS Code 扩展（格式 Schema）——**本镜像未收录**
 
-**位置**：[`extensions/vscode/`](extensions/vscode/) ｜ 20 文件 ｜ 名称 `claude-code-schemas` v0.1.1 ｜ MIT
+> ⚠️ **本镜像不含此扩展。** `extensions/`（唯一子目录 `vscode/`，20 文件）已于 2026-09-19 按用户要求整体排除 —— 它既不是 skill 也不是插件，不在「插件与 skill 基准」范围内。
+> **未收录 ≠ 不可得**：上游 `fc1a336b` 一份 zip 即可取回，命令见顶层 [`../README.md`](../README.md) 第七节 A。
+> **本节内容仍然保留**，因为那 **7 个 JSON Schema 是 Claude 插件格式的权威字段清单**，是改造时的格式对照表。以下描述全部基于**上游** `extensions/vscode/`，不是本地文件。
+
+**位置（上游）**：`extensions/vscode/` ｜ 20 文件 ｜ 名称 `claude-code-schemas` v0.1.1 ｜ MIT
+**排除前的本地指纹**：`270378ae664cf8ccf47992f73a956972`（如需比对取回件是否同版本，用此值）
 
 ### 它是什么
 
@@ -344,7 +350,7 @@ SDD 把中间产物显式化：
 - 代码量 653 行 TypeScript（6 个源文件）—— **价值全在 7 个 schema 里**
 - ⚠️ **没有预打包产物**：仓库内既无 `.vsix` 也无 `dist/`，要装必须先 `npm install && npm run build && npm run package`。但改造用途下**只需要 `schemas/` 里那 7 个 JSON 文件**，装不装扩展无所谓
 
-### 7 个 JSON Schema（896 行，本目录最实用的部分）
+### 7 个 JSON Schema（896 行，**本镜像未收录但最值得取回的部分**）
 
 | 文件 | 行数 | 管什么 |
 |---|---|---|
@@ -431,7 +437,7 @@ schema 为 `additionalProperties: false`，因此任何越界字段都会被标�
 ## 八、目录结构与指纹
 
 ```
-agent-alchemy-marketplace/                    165 files（上游原样 163）
+agent-alchemy-marketplace/                    145 files（上游原样 143）
 ├── README.md                                 ← 本文件（本地文档）
 ├── .claude-plugin/
 │   └── marketplace.json                      1 file   指纹 bc0236b5d4cbd3baedcda888549e1419
@@ -440,16 +446,12 @@ agent-alchemy-marketplace/                    165 files（上游原样 163）
 ├── sdd-tools/               41 files / 12,716 md 行   指纹 d05f987a0964c02cd90b512a7234fba2
 ├── plugin-tools/            20 files / 11,770 md 行   指纹 237382f5562b8482eb55bdd188ebdad9
 ├── tdd-tools/               21 files /  8,961 md 行   指纹 fcfafcbfd6d2b114663a85675b0648a6
-├── dev-tools/               25 files /  5,699 md 行   指纹 a9c9403919c7a3154afc000922a2f00b
-└── extensions/
-    └── vscode/              20 files               指纹 270378ae664cf8ccf47992f73a956972
-        ├── README.md
-        ├── package.json          扩展清单（claude-code-schemas v0.1.1）
-        ├── src/                  653 行 TS：extension.ts + types.ts + frontmatter/{validator,completions,hover,utils}.ts
-        └── schemas/              ★ 7 个 JSON Schema（896 行）
+└── dev-tools/               25 files /  5,699 md 行   指纹 a9c9403919c7a3154afc000922a2f00b
+
+（`extensions/` 未收录，见第六节）
 ```
 
-**全部文件均从上游原样复制，未做任何修改。**（插件来自 `claude/<插件名>/`，扩展来自 `extensions/vscode/`，注册表来自 `.claude-plugin/`）
+**全部文件均从上游原样复制，未做任何修改。**（插件来自 `claude/<插件名>/`，注册表来自 `.claude-plugin/`）
 
 > 本目录内仅两个文件不是上游件：`README.md`（本文件）与 `core-tools/PROVENANCE.md`（本地溯源记录）。因此对 `core-tools/` 做 `diff -rq` 会**稳定地多出这 1 行差异**，属预期。
 >
@@ -484,7 +486,7 @@ find . -type f ! -name PROVENANCE.md | LC_ALL=C sort | xargs md5sum | md5sum | c
 
 已识别的改造障碍（详见 `../README.md`）：
 
-1. **`${CLAUDE_PLUGIN_ROOT}` 路径变量** —— 全镜像实测 **251 处、分布 43 个文件**（含扩展 README 1 处），WorkBuddy 不展开此变量
+1. **`${CLAUDE_PLUGIN_ROOT}` 路径变量** —— 全镜像实测 **251 处、分布 43 个文件**，WorkBuddy 不展开此变量
 2. **Agent Teams 原语** —— `TeamCreate` / `TeamDelete` / `SendMessage` / `Task(model: opus|sonnet)` 在 WorkBuddy 中不存在，需映射为 `Task` 子代理 + 磁盘任务记录。**这套原语的完整语义在 [`claude-tools/`](claude-tools/) 里（3033 行）—— 改造前先读它，才能明确"要替代掉什么"；`sdd-tools` 的 27 处引用也全部指向它**
 3. **目录约定** —— `.claude/sessions/`、`~/.claude/tasks/`、`.claude/agent-alchemy.local.md` 等路径需改为 WorkBuddy 的 `.workbuddy/` 树
 4. **`AskUserQuestion` 在子代理中不可用**（这条在 OpenCode 说明里也出现过，需实测 WorkBuddy 行为）

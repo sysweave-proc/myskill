@@ -19,9 +19,11 @@
 >
 > **2026-09-19 外部依赖整包入库**：`codebase-analysis` 非自足包，其依赖的上游插件 `agent-alchemy-core-tools` **v0.2.3**（26 文件）同期原样入库，与上游 `claude/core-tools/` 逐文件 blob SHA 校验一致。
 >
-> **2026-09-19 外部资产区收口（二次定稿）**：`external-skills/` 最终定型为 `skills/`（本机安装的独立 skill，叶）＋ [`agent-alchemy-marketplace/`](external-skills/agent-alchemy-marketplace/)（上游市场整包镜像，容器）。**三处调整**：① `codebase-analysis` 从 `skills/` 移出——它只是插件内的一个 skill，上游原件在镜像内，重复留档无意义，且已确认后续不使用；② 早期独立归档 `agent-alchemy-core-tools/` 并入镜像 `core-tools/`；③ 撤销 `CATALOG.md`（索引职责归 `external-skills/README.md`，避免两处口径漂移）。镜像扩为 **6 插件 ＋ 1 VS Code 扩展 ＋ 市场注册表**，并补齐两处**真实断链**：`claude-tools`（`sdd-tools` 27 处跨插件引用）与 `.claude-plugin/marketplace.json`（`plugin-tools` 5 处引用）。
+> **2026-09-19 外部资产区收口（二次定稿）**：`external-skills/` 最终定型为 `skills/`（本机安装的独立 skill，叶）＋ [`agent-alchemy-marketplace/`](external-skills/agent-alchemy-marketplace/)（上游市场整包镜像，容器）。**三处调整**：① `codebase-analysis` 从 `skills/` 移出——它只是插件内的一个 skill，上游原件在镜像内，重复留档无意义，且已确认后续不使用；② 早期独立归档 `agent-alchemy-core-tools/` 并入镜像 `core-tools/`；③ 撤销 `CATALOG.md`（索引职责归 `external-skills/README.md`，避免两处口径漂移）。镜像扩为 **6 插件 ＋ 1 VS Code 扩展 ＋ 市场注册表**（扩展于同日排除，见下条），并补齐两处**真实断链**：`claude-tools`（`sdd-tools` 27 处跨插件引用）与 `.claude-plugin/marketplace.json`（`plugin-tools` 5 处引用）。
 >
-> **2026-09-19 基线可复算化**：外部区指纹口径统一为 `find . -type f ! -name PROVENANCE.md | LC_ALL=C sort | xargs md5sum | md5sum`，并**作废全部历史指纹值**——旧值既受 `sort` 的 locale 影响（换环境不可复现），又有一个「把自身 md5 写进自身」的自引用失效值。同日重下上游 `main` 全量 `diff -rq`：6 插件 + 扩展 + 注册表**零差异**，`core-tools` 26 个上游文件 `md5sum -c` 26/26 通过，上游 HEAD 仍为 `fc1a336b`（2026-05-31，未更新）。
+> **2026-09-19 排除 VS Code 扩展**：镜像内 `extensions/`（唯一子目录 `vscode/`，20 文件，即 `claude-code-schemas` v0.1.1）整体移除——它既非 skill 也非插件，不在「插件与 skill 基准」范围内。镜像规模随之变为 **145 文件（上游原样 143）**。其中 7 个 JSON Schema（Claude 插件格式的权威字段清单）**未收录但可随时取回**：上游 `fc1a336b` 一份 zip 即可，命令见 [`external-skills/README.md`](external-skills/README.md) 第七节 A；排除前指纹 `270378ae664cf8ccf47992f73a956972` 已留档，用于判断取回件是否同版本。
+>
+> **2026-09-19 基线可复算化**：外部区指纹口径统一为 `find . -type f ! -name PROVENANCE.md | LC_ALL=C sort | xargs md5sum | md5sum`，并**作废全部历史指纹值**——旧值既受 `sort` 的 locale 影响（换环境不可复现），又有一个「把自身 md5 写进自身」的自引用失效值。同日重下上游 `main` 全量 `diff -rq`：6 插件 + 注册表**零差异**，`core-tools` 26 个上游文件 `md5sum -c` 26/26 通过，上游 HEAD 仍为 `fc1a336b`（2026-05-31，未更新）。
 >
 > **v0.6.0 post-freeze 修复**（2 项，均已实测）：`SKILL.md` 的 `description: >-` → `|-`（原写法令官方校验器七版全 fail，改后 `Skill is valid!`）；`tests/test_skill_integrity.py` 增加基线目录存在性/非空守卫（原版传错路径会假通过）。因此 `versions/v0.6.0/skill/` 与其 `source.zip` 不再逐字节一致，记录见该版 `README.md` 备注与 `skill/CHANGELOG.md`。
 
@@ -52,7 +54,7 @@
 
 | 目录 | 说明 |
 |---|---|
-| [`external-skills/`](external-skills/) | **外部资产备份区（不是本仓资产）**，一级两类：`skills/` = 本机安装的独立 skill 原样留档（可安装单元，叶；现为 `codebase-reading` / `deep-read`）；[`agent-alchemy-marketplace/`](external-skills/agent-alchemy-marketplace/) = 上游市场整包镜像（容器，不可直接装；6 插件 + 1 VS Code 扩展 + 市场注册表）。含**可复算的逐包指纹基线 + 基准 commit**，**需定期检查上游是否更新**；上游已定位为 [`sequenzia/agent-alchemy`](https://github.com/sequenzia/agent-alchemy)。全部口径、已知本地偏差、更新检查命令见其 `README.md` |
+| [`external-skills/`](external-skills/) | **外部资产备份区（不是本仓资产）**，一级两类：`skills/` = 本机安装的独立 skill 原样留档（可安装单元，叶；现为 `codebase-reading` / `deep-read`）；[`agent-alchemy-marketplace/`](external-skills/agent-alchemy-marketplace/) = 上游市场整包镜像（容器，不可直接装；6 插件 + 市场注册表）。含**可复算的逐包指纹基线 + 基准 commit**，**需定期检查上游是否更新**；上游已定位为 [`sequenzia/agent-alchemy`](https://github.com/sequenzia/agent-alchemy)。全部口径、已知本地偏差、更新检查命令见其 `README.md` |
 | [`skill-test/`](skill-test/) | 外部 skill 实测区：2026-09-19 用 `codebase-analysis` / `codebase-reading` / `deep-read` 实测的落盘结果；产物为 [`skill-test/postgres-notes/`](skill-test/postgres-notes/)（PostgreSQL 19beta2 源码阅读笔记，两条主线共 6 篇） |
 
 > **环境提醒**：本机的 `rm` 是包装函数（`rm() { "${CODEBUDDY_SAFE_DELETE_BIN_DIR}/rm" "$@"; }`），行为是**移入回收站**而非真删；跨文件系统（`/mnt/disk` ↔ `/`）时甚至不留 `.trashinfo`。所以「删掉」未必等于内容消失——核查删除结果时要看实际，而不是看命令返回；要真删需用 `/usr/bin/rm` 并清理回收站里对应副本。
