@@ -1,0 +1,19 @@
+{
+  "name": "agent-alchemy-claude-tools",
+  "version": "0.2.5-cb.1",
+  "description": "CodeBuddy 版 claude-tools：Task 管理（TaskCreate/TaskGet/TaskList/TaskUpdate/TaskOutput/TaskStop）与 Agent Teams（TeamCreate/SendMessage/生命周期/hook）的参考手册。移植自 Stephen Sequenzia 的 agent-alchemy claude-tools v0.2.5。",
+  "author": {
+    "name": "Stephen Sequenzia (upstream) / CodeBuddy port",
+    "url": "https://github.com/sequenzia/agent-alchemy"
+  },
+  "homepage": "https://github.com/sequenzia/agent-alchemy",
+  "repository": "https://github.com/sequenzia/agent-alchemy",
+  "license": "MIT",
+  "keywords": [
+    "tasks",
+    "agent-teams",
+    "reference",
+    "orchestration",
+    "messaging"
+  ]
+}

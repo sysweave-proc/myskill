@@ -95,4 +95,4 @@ diff -rq /tmp/aa/agent-alchemy-main/claude/core-tools ./
 
 - 26 个文件与上游 `claude/core-tools/` **逐字节一致**，差异标记 `0`。
 - **零改写**：无适配、无补丁、无删改。
-- 因此可作为后续 WorkBuddy 改造的**原始基线**。
+- 因此可作为后续移植改造的**原始基线**。

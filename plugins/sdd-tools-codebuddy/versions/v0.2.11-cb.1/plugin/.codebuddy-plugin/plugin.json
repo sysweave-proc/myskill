@@ -1,0 +1,20 @@
+{
+  "name": "agent-alchemy-sdd-tools",
+  "version": "0.2.11-cb.1",
+  "description": "CodeBuddy 版 sdd-tools：规格驱动开发全流水线（create-spec → analyze-spec → create-tasks → execute-tasks / run-tasks），含 7 个 agent 与执行质量闸门 hook。移植自 Stephen Sequenzia 的 agent-alchemy sdd-tools v0.2.11。",
+  "author": {
+    "name": "Stephen Sequenzia (upstream) / CodeBuddy port",
+    "url": "https://github.com/sequenzia/agent-alchemy"
+  },
+  "homepage": "https://github.com/sequenzia/agent-alchemy",
+  "repository": "https://github.com/sequenzia/agent-alchemy",
+  "license": "MIT",
+  "keywords": [
+    "sdd",
+    "spec-driven-development",
+    "specification",
+    "task-decomposition",
+    "agent-teams",
+    "wave-execution"
+  ]
+}

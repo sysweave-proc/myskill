@@ -1,0 +1,20 @@
+{
+  "name": "agent-alchemy-core-tools",
+  "version": "0.2.3-cb.2",
+  "description": "CodeBuddy 版 core-tools：代码库分析、多智能体深度探索、交互式访谈、语言模式与技术图表的可复用基座。移植自 Stephen Sequenzia 的 agent-alchemy core-tools v0.2.3。",
+  "author": {
+    "name": "Stephen Sequenzia (upstream) / CodeBuddy port",
+    "url": "https://github.com/sequenzia/agent-alchemy"
+  },
+  "homepage": "https://github.com/sequenzia/agent-alchemy",
+  "repository": "https://github.com/sequenzia/agent-alchemy",
+  "license": "MIT",
+  "keywords": [
+    "codebase-analysis",
+    "deep-analysis",
+    "code-explorer",
+    "interview",
+    "mermaid",
+    "multi-agent"
+  ]
+}

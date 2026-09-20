@@ -1,0 +1,21 @@
+{
+  "name": "agent-alchemy-dev-tools",
+  "version": "0.3.4-cb.1",
+  "description": "CodeBuddy 版 dev-tools：功能开发全流程、假设驱动的 bug 排查、代码评审、架构模式、文档管理与 changelog。移植自 Stephen Sequenzia 的 agent-alchemy dev-tools v0.3.4。",
+  "author": {
+    "name": "Stephen Sequenzia (upstream) / CodeBuddy port",
+    "url": "https://github.com/sequenzia/agent-alchemy"
+  },
+  "homepage": "https://github.com/sequenzia/agent-alchemy",
+  "repository": "https://github.com/sequenzia/agent-alchemy",
+  "license": "MIT",
+  "keywords": [
+    "feature-dev",
+    "bug-killer",
+    "debugging",
+    "code-review",
+    "docs-manager",
+    "changelog",
+    "release"
+  ]
+}

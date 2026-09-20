@@ -1,0 +1,19 @@
+{
+  "name": "agent-alchemy-tdd-tools",
+  "version": "0.2.1-cb.1",
+  "description": "CodeBuddy 版 tdd-tools：RED-GREEN-REFACTOR 循环、测试生成、覆盖率缺口分析、TDD 任务对与波次执行。移植自 Stephen Sequenzia 的 agent-alchemy tdd-tools v0.2.1。",
+  "author": {
+    "name": "Stephen Sequenzia (upstream) / CodeBuddy port",
+    "url": "https://github.com/sequenzia/agent-alchemy"
+  },
+  "homepage": "https://github.com/sequenzia/agent-alchemy",
+  "repository": "https://github.com/sequenzia/agent-alchemy",
+  "license": "MIT",
+  "keywords": [
+    "tdd",
+    "red-green-refactor",
+    "test-generation",
+    "coverage",
+    "test-review"
+  ]
+}

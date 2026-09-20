@@ -1,21 +1,17 @@
 # skill-test（外部 skill 实测区）
 
-> 一句话：**用真实源码库实测新装 skill 的产物暂存区**——产出物是笔记，不是 skill 资产，因此不进仓库顶层的 Skill 索引表。
-
-## 实测背景
-
-2026-09-19 为测试三个新装的外部 skill（`codebase-analysis` / `codebase-reading` / `deep-read`），把自建的三个同类 skill 临时移出 `~/.codebuddy/skills/`（当时的停用区 `_disabled-skills/` **当日已整体删除**），以避免语义重叠互相抢自动触发（原委与后续处置见顶层 [`README.md`](../README.md) 的「变动记录」）。本目录即那轮实测的落盘结果。
-
-被测的三个外部 skill 已原样留档在 [`../external-skills/`](../external-skills/)，并记录了内容指纹基线——它们**没有版本号，需定期检查上游是否更新**。
+**用真实源码库实测新装 skill 的产物暂存区** —— 产出物是笔记，不是 skill 资产，因此不进顶层的资产总览。
 
 ## 实测配置
 
 | 项 | 值 |
 |---|---|
+| 日期 | 2026-09-19 |
 | 被测源码库 | `/home/zhq/mydisk/github/postgres` |
 | 版本 | PostgreSQL 19beta2（版本判定依据 `configure.ac:20`） |
-| 日期 | 2026-09-19 |
 | 参与 skill | `codebase-analysis`（出地图）、`deep-read`（出地形）、手写骨架 |
+
+实测时为避免语义重叠互相抢自动触发，自建的同类 skill 曾被临时移出 `~/.codebuddy/skills/`。被测的三个外部 skill 中，`codebase-reading` / `deep-read` 现在 [`../skills/`](../skills/) 下，`codebase-analysis` 已删除（它只是插件内部的一个 skill）。
 
 ## 产物
 
