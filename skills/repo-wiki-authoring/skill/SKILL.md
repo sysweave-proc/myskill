@@ -66,6 +66,7 @@ This workflow repeats for every page, so it is the one place that can trip **pla
 - `references/content-page-template.md` — the 10-section page skeleton, citation/coordinate syntax, mermaid selection table, mandatory closing placeholders.
 - `references/knowledge-card-template.md` — `_index.yaml` / `_module.yaml` schemas, the 5-file module card, the topic-card frontmatter and section skeleton.
 - `references/generation-workflow.md` — module modeling, catalog planning, per-page `prompt`/`dependent_files` conventions, validation checklist, and expected scale.
+- `scripts/_validate_*.py` — runnable validation of the produced wiki: full-set acceptance (skeleton / coordinates / provenance / cross-references), coordinate audit, single-chapter check, semantic sampling, and name-staleness screening.
 
 ## Maintenance
 
@@ -74,11 +75,10 @@ This is a **cross-project** skill (L1 infra of the `notes-hub` repo). Its single
 - **仓库正本**: `notes-hub/infra/skills/repo-wiki-authoring/`
 - **本机安装产物**: `~/.codebuddy/skills/repo-wiki-authoring/`（agent 实际加载这里）
 
-User-level skills are **not** cloud-synced by the product; the git copy is the only mechanism that crosses machines. Edit the repo copy, then:
+User-level skills are **not** cloud-synced by the product; this git copy is the only mechanism that crosses machines. Edit the copy under `skills/repo-wiki-authoring/skill/`, then re-install it to the local skill directory:
 
 ```bash
-notes-hub/infra/scripts/notes.sh install    # 仓库 → 本机
-notes-hub/infra/scripts/notes.sh status     # 校验两侧一致
+cp -r skills/repo-wiki-authoring/skill/. ~/.codebuddy/skills/repo-wiki-authoring/
 ```
 
-（若已在本机改好，用 `notes.sh export` 回收，避免两处漂移。）
+（若已在本机改好，反向拷贝回收，避免两处漂移。）
